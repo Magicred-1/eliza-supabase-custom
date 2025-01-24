@@ -2,7 +2,7 @@ import { PGLiteDatabaseAdapter } from "@elizaos/adapter-pglite";
 import { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
 import { RedisClient } from "@elizaos/adapter-redis";
 import { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
-import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
+// import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
 import { AutoClientInterface } from "@elizaos/client-auto";
 import { DiscordClientInterface } from "@elizaos/client-discord";
 import { FarcasterAgentClient } from "@elizaos/client-farcaster";
@@ -13,6 +13,7 @@ import { TwitterClientInterface } from "@elizaos/client-twitter";
 // import { ReclaimAdapter } from "@elizaos/plugin-reclaim";
 import { DirectClient } from "@elizaos/client-direct";
 import { PrimusAdapter } from "@elizaos/plugin-primus";
+import { createClient } from "@supabase/supabase-js";
 
 import {
     AgentRuntime,
@@ -33,13 +34,19 @@ import {
     settings,
     stringToUuid,
     validateCharacterConfig,
+    Character as CoreCharacter,
 } from "@elizaos/core";
+
+interface Character extends CoreCharacter {
+    __source?: string;
+}
+
 import { zgPlugin } from "@elizaos/plugin-0g";
 
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
 import createGoatPlugin from "@elizaos/plugin-goat";
 // import { intifacePlugin } from "@elizaos/plugin-intiface";
-import { DirectClient } from "@elizaos/client-direct";
+// import { DirectClient } from "@elizaos/client-direct";
 import { ThreeDGenerationPlugin } from "@elizaos/plugin-3d-generation";
 import { abstractPlugin } from "@elizaos/plugin-abstract";
 import { alloraPlugin } from "@elizaos/plugin-allora";
@@ -102,7 +109,7 @@ import net from "net";
 import path from "path";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
-import {dominosPlugin} from "@elizaos/plugin-dominos";
+import { dominosPlugin } from "@elizaos/plugin-dominos";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -152,14 +159,29 @@ function tryLoadFile(filePath: string): string | null {
 function mergeCharacters(base: Character, child: Character): Character {
     const mergeObjects = (baseObj: any, childObj: any) => {
         const result: any = {};
-        const keys = new Set([...Object.keys(baseObj || {}), ...Object.keys(childObj || {})]);
-        keys.forEach(key => {
-            if (typeof baseObj[key] === 'object' && typeof childObj[key] === 'object' && !Array.isArray(baseObj[key]) && !Array.isArray(childObj[key])) {
+        const keys = new Set([
+            ...Object.keys(baseObj || {}),
+            ...Object.keys(childObj || {}),
+        ]);
+        keys.forEach((key) => {
+            if (
+                typeof baseObj[key] === "object" &&
+                typeof childObj[key] === "object" &&
+                !Array.isArray(baseObj[key]) &&
+                !Array.isArray(childObj[key])
+            ) {
                 result[key] = mergeObjects(baseObj[key], childObj[key]);
-            } else if (Array.isArray(baseObj[key]) || Array.isArray(childObj[key])) {
-                result[key] = [...(baseObj[key] || []), ...(childObj[key] || [])];
+            } else if (
+                Array.isArray(baseObj[key]) ||
+                Array.isArray(childObj[key])
+            ) {
+                result[key] = [
+                    ...(baseObj[key] || []),
+                    ...(childObj[key] || []),
+                ];
             } else {
-                result[key] = childObj[key] !== undefined ? childObj[key] : baseObj[key];
+                result[key] =
+                    childObj[key] !== undefined ? childObj[key] : baseObj[key];
             }
         });
         return result;
@@ -174,32 +196,36 @@ async function loadCharacter(filePath: string): Promise<Character> {
     let character = JSON.parse(content);
     validateCharacterConfig(character);
 
-     // .id isn't really valid
-     const characterId = character.id || character.name;
-     const characterPrefix = `CHARACTER.${characterId.toUpperCase().replace(/ /g, "_")}.`;
-     const characterSettings = Object.entries(process.env)
-         .filter(([key]) => key.startsWith(characterPrefix))
-         .reduce((settings, [key, value]) => {
-             const settingKey = key.slice(characterPrefix.length);
-             return { ...settings, [settingKey]: value };
-         }, {});
-     if (Object.keys(characterSettings).length > 0) {
-         character.settings = character.settings || {};
-         character.settings.secrets = {
-             ...characterSettings,
-             ...character.settings.secrets,
-         };
-     }
-     // Handle plugins
-     character.plugins = await handlePluginImporting(
-        character.plugins
-    );
+    // .id isn't really valid
+    const characterId = character.id || character.name;
+    const characterPrefix = `CHARACTER.${characterId.toUpperCase().replace(/ /g, "_")}.`;
+    const characterSettings = Object.entries(process.env)
+        .filter(([key]) => key.startsWith(characterPrefix))
+        .reduce((settings, [key, value]) => {
+            const settingKey = key.slice(characterPrefix.length);
+            return { ...settings, [settingKey]: value };
+        }, {});
+    if (Object.keys(characterSettings).length > 0) {
+        character.settings = character.settings || {};
+        character.settings.secrets = {
+            ...characterSettings,
+            ...character.settings.secrets,
+        };
+    }
+    // Handle plugins
+    character.plugins = await handlePluginImporting(character.plugins);
     if (character.extends) {
-        elizaLogger.info(`Merging  ${character.name} character with parent characters`);
+        elizaLogger.info(
+            `Merging  ${character.name} character with parent characters`
+        );
         for (const extendPath of character.extends) {
-            const baseCharacter = await loadCharacter(path.resolve(path.dirname(filePath), extendPath));
+            const baseCharacter = await loadCharacter(
+                path.resolve(path.dirname(filePath), extendPath)
+            );
             character = mergeCharacters(baseCharacter, character);
-            elizaLogger.info(`Merged ${character.name} with ${baseCharacter.name}`);
+            elizaLogger.info(
+                `Merged ${character.name} with ${baseCharacter.name}`
+            );
         }
     }
     return character;
@@ -462,24 +488,27 @@ export function getTokenForProvider(
 }
 
 function initializeDatabase(dataDir: string) {
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
-        elizaLogger.info("Initializing Supabase connection...");
-        const db = new SupabaseDatabaseAdapter(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_ANON_KEY
-        );
+    // if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    //     elizaLogger.info("Initializing Supabase connection...");
+    //     const db = new SupabaseDatabaseAdapter(
+    //         process.env.SUPABASE_URL,
+    //         process.env.SUPABASE_ANON_KEY
+    //     );
 
-        // Test the connection
-        db.init()
-            .then(() => {
-                elizaLogger.success("Successfully connected to Supabase database");
-            })
-            .catch((error) => {
-                elizaLogger.error("Failed to connect to Supabase:", error);
-            });
+    //     // Test the connection
+    //     db.init()
+    //         .then(() => {
+    //             elizaLogger.success(
+    //                 "Successfully connected to Supabase database"
+    //             );
+    //         })
+    //         .catch((error) => {
+    //             elizaLogger.error("Failed to connect to Supabase:", error);
+    //         });
 
-        return db;
-    } else if (process.env.POSTGRES_URL) {
+    //     return db;
+    // } else
+    if (process.env.POSTGRES_URL) {
         elizaLogger.info("Initializing PostgreSQL connection...");
         const db = new PostgresDatabaseAdapter({
             connectionString: process.env.POSTGRES_URL,
@@ -489,7 +518,9 @@ function initializeDatabase(dataDir: string) {
         // Test the connection
         db.init()
             .then(() => {
-                elizaLogger.success("Successfully connected to PostgreSQL database");
+                elizaLogger.success(
+                    "Successfully connected to PostgreSQL database"
+                );
             })
             .catch((error) => {
                 elizaLogger.error("Failed to connect to PostgreSQL:", error);
@@ -504,14 +535,17 @@ function initializeDatabase(dataDir: string) {
         });
         return db;
     } else {
-        const filePath = process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
+        const filePath =
+            process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
         elizaLogger.info(`Initializing SQLite database at ${filePath}...`);
         const db = new SqliteDatabaseAdapter(new Database(filePath));
 
         // Test the connection
         db.init()
             .then(() => {
-                elizaLogger.success("Successfully connected to SQLite database");
+                elizaLogger.success(
+                    "Successfully connected to SQLite database"
+                );
             })
             .catch((error) => {
                 elizaLogger.error("Failed to connect to SQLite:", error);
@@ -689,7 +723,8 @@ export async function createAgent(
     if (
         process.env.PRIMUS_APP_ID &&
         process.env.PRIMUS_APP_SECRET &&
-        process.env.VERIFIABLE_INFERENCE_ENABLED === "true"){
+        process.env.VERIFIABLE_INFERENCE_ENABLED === "true"
+    ) {
         verifiableInferenceAdapter = new PrimusAdapter({
             appId: process.env.PRIMUS_APP_ID,
             appSecret: process.env.PRIMUS_APP_SECRET,
@@ -851,9 +886,7 @@ export async function createAgent(
             getSecret(character, "AKASH_WALLET_ADDRESS")
                 ? akashPlugin
                 : null,
-            getSecret(character, "QUAI_PRIVATE_KEY")
-                ? quaiPlugin
-                : null,
+            getSecret(character, "QUAI_PRIVATE_KEY") ? quaiPlugin : null,
         ].filter(Boolean),
         providers: [],
         actions: [],
@@ -936,11 +969,11 @@ function initializeCache(
     }
 }
 
+// Modify the startAgent function to handle source tracking
 async function startAgent(
     character: Character,
     directClient: DirectClient
 ): Promise<AgentRuntime> {
-    let db: IDatabaseAdapter & IDatabaseCacheAdapter;
     try {
         character.id ??= stringToUuid(character.name);
         character.username ??= character.name;
@@ -952,9 +985,8 @@ async function startAgent(
             fs.mkdirSync(dataDir, { recursive: true });
         }
 
-        db = initializeDatabase(dataDir) as IDatabaseAdapter &
+        const db = initializeDatabase(dataDir) as IDatabaseAdapter &
             IDatabaseCacheAdapter;
-
         await db.init();
 
         const cache = initializeCache(
@@ -962,36 +994,17 @@ async function startAgent(
             character,
             "",
             db
-        ); // "" should be replaced with dir for file system caching. THOUGHTS: might probably make this into an env
-        const runtime: AgentRuntime = await createAgent(
-            character,
-            db,
-            cache,
-            token
         );
 
-        // start services/plugins/process knowledge
+        const runtime = await createAgent(character, db, cache, token);
         await runtime.initialize();
-
-        // start assigned clients
         runtime.clients = await initializeClients(character, runtime);
-
-        // add to container
         directClient.registerAgent(runtime);
 
-        // report to console
         elizaLogger.debug(`Started ${character.name} as ${runtime.agentId}`);
-
         return runtime;
     } catch (error) {
-        elizaLogger.error(
-            `Error starting agent for character ${character.name}:`,
-            error
-        );
-        elizaLogger.error(error);
-        if (db) {
-            await db.close();
-        }
+        elizaLogger.error(`Error starting agent ${character.name}:`, error);
         throw error;
     }
 }
@@ -1015,52 +1028,180 @@ const checkPortAvailable = (port: number): Promise<boolean> => {
     });
 };
 
-const startAgents = async () => {
+async function startAgents() {
     const directClient = new DirectClient();
     let serverPort = parseInt(settings.SERVER_PORT || "3000");
     const args = parseArguments();
     let charactersArg = args.characters || args.character;
-    let characters = [defaultCharacter];
 
+    // Load local characters
+    let localCharacters = [defaultCharacter];
     if (charactersArg) {
-        characters = await loadCharacters(charactersArg);
+        localCharacters = await loadCharacters(charactersArg);
     }
 
-    try {
-        for (const character of characters) {
-            await startAgent(character, directClient);
+    // Track active agents
+    const activeAgents = new Map<string, AgentRuntime>();
+
+    // Function to handle Supabase config updates
+    const handleSupabaseConfigUpdate = async (supabaseConfigs: Character[]) => {
+        const currentSupabaseIds = new Set(supabaseConfigs.map((c) => c.id));
+
+        // Stop agents removed from Supabase or marked inactive
+        for (const [id, runtime] of activeAgents.entries()) {
+            if (
+                runtime.character.__source === "supabase" &&
+                !currentSupabaseIds.has(
+                    id as `${string}-${string}-${string}-${string}-${string}`
+                )
+            ) {
+                elizaLogger.info(`Stopping Supabase agent ${id}`);
+                // await runtime.shutdown();
+                directClient.unregisterAgent(runtime);
+                activeAgents.delete(id);
+            }
         }
-    } catch (error) {
-        elizaLogger.error("Error starting agents:", error);
+
+        // Start or update agents
+        for (const config of supabaseConfigs) {
+            try {
+                const existing = activeAgents.get(config.id);
+
+                if (existing) {
+                    // Check for changes in configuration
+                    if (
+                        JSON.stringify(existing.character) !==
+                        JSON.stringify(config)
+                    ) {
+                        elizaLogger.info(`Updating agent ${config.id}`);
+                        // await existing.shutdown();
+                        directClient.unregisterAgent(existing);
+                        activeAgents.delete(config.id);
+
+                        const newRuntime = await startAgent(
+                            config,
+                            directClient
+                        );
+                        activeAgents.set(config.id, newRuntime);
+                    }
+                } else {
+                    elizaLogger.info(
+                        `Starting new Supabase agent ${config.id}`
+                    );
+                    const runtime = await startAgent(config, directClient);
+                    activeAgents.set(config.id, runtime);
+                }
+            } catch (error) {
+                elizaLogger.error(
+                    `Error processing Supabase config ${config.id}:`,
+                    error
+                );
+            }
+        }
+    };
+
+    // Initialize Supabase client
+    let supabaseConfigs: Character[] = [];
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Fetch active configurations
+        const fetchSupabaseConfigs = async () => {
+            const { data, error } = await supabase
+                .from("configuration")
+                .select("id, name, active, configuration")
+                .eq("active", true);
+
+            if (error) {
+                elizaLogger.error("Error fetching configurations:", error);
+                return [];
+            }
+
+            return data
+                .filter((row) => row.configuration) // Skip rows with empty configuration
+                .map((row) => {
+                    try {
+                        const character: Character = {
+                            ...row.configuration,
+                            id: row.id,
+                            name: row.name || "Unnamed Agent",
+                            __source: "supabase",
+                        };
+                        validateCharacterConfig(character);
+                        return character;
+                    } catch (e) {
+                        elizaLogger.error(
+                            `Invalid configuration ${row.id}:`,
+                            e
+                        );
+                        return null;
+                    }
+                })
+                .filter(Boolean) as Character[];
+        };
+
+        // Realtime subscription
+        supabase
+            .channel("configuration")
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "configuration",
+                },
+                async (payload) => {
+                    elizaLogger.debug(
+                        `Configuration change: ${payload.eventType}`
+                    );
+                    const updatedConfigs = await fetchSupabaseConfigs();
+                    await handleSupabaseConfigUpdate(updatedConfigs);
+                }
+            )
+            .subscribe();
+
+        // Initial load
+        supabaseConfigs = await fetchSupabaseConfigs();
     }
 
-    // Find available port
+    // Merge configurations (Supabase configs override local ones)
+    const mergedCharacters = [...localCharacters, ...supabaseConfigs]
+        .reduce((map, char) => {
+            // Use spread operator to merge properties, Supabase configs will override local ones
+            map.set(char.id, {
+                ...(map.get(char.id) || {}), // Existing character
+                ...char, // New character data
+            });
+            return map;
+        }, new Map<string, Character>())
+        .values();
+
+    // Start all agents
+    for (const character of mergedCharacters) {
+        if (!activeAgents.has(character.id)) {
+            try {
+                const runtime = await startAgent(character, directClient);
+                activeAgents.set(character.id, runtime);
+            } catch (error) {
+                elizaLogger.error(
+                    `Failed to start agent ${character.id}:`,
+                    error
+                );
+            }
+        }
+    }
+
+    // Server setup
     while (!(await checkPortAvailable(serverPort))) {
-        elizaLogger.warn(
-            `Port ${serverPort} is in use, trying ${serverPort + 1}`
-        );
         serverPort++;
     }
 
-    // upload some agent functionality into directClient
-    directClient.startAgent = async (character) => {
-        // Handle plugins
-        character.plugins = await handlePluginImporting(character.plugins);
-
-        // wrap it so we don't have to inject directClient later
-        return startAgent(character, directClient);
-    };
-
     directClient.start(serverPort);
-
-    if (serverPort !== parseInt(settings.SERVER_PORT || "3000")) {
-        elizaLogger.log(`Server started on alternate port ${serverPort}`);
-    }
-
-    elizaLogger.log(
-        "Run `pnpm start:client` to start the client and visit the outputted URL (http://localhost:5173) to chat with your agents. When running multiple agents, use client with different port `SERVER_PORT=3001 pnpm start:client`"
-    );
-};
+    elizaLogger.log(`Agent server running on port ${serverPort}`);
+}
 
 startAgents().catch((error) => {
     elizaLogger.error("Unhandled error in startAgents:", error);
