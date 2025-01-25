@@ -3,13 +3,13 @@ import {
     type Memory,
     type Goal,
     type Relationship,
-    type Actor,
-    type GoalStatus,
-    type Account,
+    Actor,
+    GoalStatus,
+    Account,
     type UUID,
-    type Participant,
-    type Room,
-    type RAGKnowledgeItem,
+    Participant,
+    Room,
+    RAGKnowledgeItem,
     elizaLogger,
 } from "@elizaos/core";
 import { DatabaseAdapter } from "@elizaos/core";
@@ -114,20 +114,14 @@ export class SupabaseDatabaseAdapter extends DatabaseAdapter {
         roomIds: UUID[];
         agentId?: UUID;
         tableName: string;
-        limit?: number;
     }): Promise<Memory[]> {
         let query = this.supabase
             .from(params.tableName)
             .select("*")
-            .in("roomId", params.roomIds)
-            .order("createdAt", { ascending: false });
+            .in("roomId", params.roomIds);
 
         if (params.agentId) {
             query = query.eq("agentId", params.agentId);
-        }
-
-        if (params.limit) {
-            query = query.limit(params.limit);
         }
 
         const { data, error } = await query;
@@ -187,7 +181,7 @@ export class SupabaseDatabaseAdapter extends DatabaseAdapter {
             const { data } = response;
 
             return data
-                .flatMap((room) =>
+                .map((room) =>
                     room.participants.map((participant) => {
                         const user = participant.account as unknown as Actor;
                         return {
@@ -197,7 +191,8 @@ export class SupabaseDatabaseAdapter extends DatabaseAdapter {
                             username: user?.username,
                         };
                     })
-                );
+                )
+                .flat();
         } catch (error) {
             elizaLogger.error("error", error);
             throw error;
@@ -367,31 +362,6 @@ export class SupabaseDatabaseAdapter extends DatabaseAdapter {
         }
 
         return data as Memory;
-    }
-
-    async getMemoriesByIds(
-        memoryIds: UUID[],
-        tableName?: string
-    ): Promise<Memory[]> {
-        if (memoryIds.length === 0) return [];
-
-        let query = this.supabase
-            .from("memories")
-            .select("*")
-            .in("id", memoryIds);
-
-        if (tableName) {
-            query = query.eq("type", tableName);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-            console.error("Error retrieving memories by IDs:", error);
-            return [];
-        }
-
-        return data as Memory[];
     }
 
     async createMemory(

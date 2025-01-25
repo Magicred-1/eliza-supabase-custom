@@ -2,16 +2,16 @@ import path from "path";
 import { composeContext } from "@elizaos/core";
 import { parseJSONObjectFromText } from "@elizaos/core";
 import {
-    type Action,
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type IVideoService,
-    type Memory,
+    Action,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    IVideoService,
+    Memory,
     ModelClass,
     ServiceType,
-    type State,
+    State,
 } from "@elizaos/core";
 import { generateText } from "@elizaos/core";
 

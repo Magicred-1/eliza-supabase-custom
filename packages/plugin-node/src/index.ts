@@ -1,6 +1,6 @@
 export * from "./services/index.ts";
 
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 
 import { describeImage } from "./actions/describe-image.ts";
 import {

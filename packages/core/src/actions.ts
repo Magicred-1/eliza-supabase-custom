@@ -1,5 +1,5 @@
 import { names, uniqueNamesGenerator } from "unique-names-generator";
-import type { Action, ActionExample } from "./types.ts";
+import { Action, ActionExample } from "./types.ts";
 
 /**
  * Composes a set of example conversations based on provided actions and a specified count.

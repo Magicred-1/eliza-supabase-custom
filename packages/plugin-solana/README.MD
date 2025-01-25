@@ -141,20 +141,8 @@ Transfers tokens between wallets.
 
 ```typescript
 // Example usage
-const result = await runtime.executeAction("SEND_TOKEN", {
+const result = await runtime.executeAction("TRANSFER_TOKEN", {
     tokenAddress: "TokenAddressHere",
-    recipient: "RecipientAddressHere",
-    amount: "1000",
-});
-```
-
-### transferSol
-
-Transfers SOL between wallets.
-
-```typescript
-// Example usage
-const result = await runtime.executeAction("SEND_SOL", {
     recipient: "RecipientAddressHere",
     amount: "1000",
 });

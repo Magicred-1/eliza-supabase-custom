@@ -1,4 +1,4 @@
-import type { Address, Hash } from "viem";
+import { Address, Hash } from "viem";
 
 export enum ACTION_RESPONSE_TYPE {
     SET = "SET",

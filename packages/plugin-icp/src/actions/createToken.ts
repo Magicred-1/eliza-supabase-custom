@@ -5,17 +5,17 @@ import {
     generateObjectDeprecated,
 } from "@elizaos/core";
 import {
-    type ActionExample,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
     type Action,
 } from "@elizaos/core";
 import { idlFactory } from "../canisters/pick-pump/index.did";
-import type { _SERVICE } from "../canisters/pick-pump/index.did.d";
-import type { ActorCreator, CreateMemeTokenArg } from "../types";
+import { _SERVICE } from "../canisters/pick-pump/index.did.d";
+import { ActorCreator, CreateMemeTokenArg } from "../types";
 import { unwrapOption, wrapOption } from "../utils/common/types/options";
 import { unwrapRustResultMap } from "../utils/common/types/results";
 import { icpWalletProvider } from "../providers/wallet";

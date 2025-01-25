@@ -5,18 +5,18 @@ import {
     generateMessageResponse,
     generateShouldRespond,
     ModelClass,
-    type Memory,
-    type Content,
-    type State,
+    Memory,
+    Content,
+    State,
     elizaLogger,
-    type HandlerCallback,
+    HandlerCallback,
 } from "@elizaos/core";
 import {
     slackMessageHandlerTemplate,
     slackShouldRespondTemplate,
 } from "./templates";
-import type { WebClient } from "@slack/web-api";
-import type { IAgentRuntime } from "@elizaos/core";
+import { WebClient } from "@slack/web-api";
+import { IAgentRuntime } from "@elizaos/core";
 
 export class MessageManager {
     private client: WebClient;
@@ -276,7 +276,7 @@ export class MessageManager {
                     agentId: this.runtime.agentId,
                     roomId,
                     content,
-                    createdAt: new Date(Number.parseFloat(event.ts) * 1000).getTime(),
+                    createdAt: new Date(parseFloat(event.ts) * 1000).getTime(),
                     embedding: getEmbeddingZeroVector(),
                 };
 

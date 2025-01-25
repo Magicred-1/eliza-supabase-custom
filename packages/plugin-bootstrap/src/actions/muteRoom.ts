@@ -2,12 +2,12 @@ import { composeContext } from "@elizaos/core";
 import { generateTrueOrFalse } from "@elizaos/core";
 import { booleanFooter } from "@elizaos/core";
 import {
-    type Action,
-    type ActionExample,
-    type IAgentRuntime,
-    type Memory,
+    Action,
+    ActionExample,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 
 export const shouldMuteTemplate =

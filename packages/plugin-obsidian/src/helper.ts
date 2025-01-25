@@ -1,10 +1,10 @@
-import { type IAgentRuntime, type AgentRuntime, ModelClass, type Memory, MemoryManager } from "@elizaos/core";
+import { IAgentRuntime, AgentRuntime, ModelClass, Memory, MemoryManager } from "@elizaos/core";
 import { elizaLogger, composeContext, generateObject, stringToUuid } from "@elizaos/core";
 //import fileTypeChecker from "file-type-checker";
 import { lookup } from 'mrmime';
 import { ObsidianProvider } from "./providers/obsidianClient";
 import { validateObsidianConfig } from "./enviroment";
-import { searchQuerySchema, type NoteHierarchy, type NoteContent } from "./types";
+import { searchQuerySchema, NoteHierarchy, NoteContent } from "./types";
 
 let obsidianInstance: ObsidianProvider | undefined;
 
@@ -14,7 +14,7 @@ export async function getObsidian(runtime: IAgentRuntime): Promise<ObsidianProvi
         const config = await validateObsidianConfig(runtime);
         obsidianInstance = await ObsidianProvider.create(
             runtime as AgentRuntime,
-            Number.parseInt(config.OBSIDIAN_API_PORT),
+            parseInt(config.OBSIDIAN_API_PORT),
             config.OBSIDIAN_API_TOKEN,
             config.OBSIDIAN_API_URL
         );

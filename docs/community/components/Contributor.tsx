@@ -1,6 +1,5 @@
-import type React from "react";
-import { useState } from "react";
-import type { ContributorProps } from "./Contributors";
+import React, { useState } from "react";
+import { ContributorProps } from "./Contributors";
 import { THEME_COLORS } from "./Contributors";
 import { hexToRgb } from "./utils";
 import ScoreIcon from "./ScoreIcon";

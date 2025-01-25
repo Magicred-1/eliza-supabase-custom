@@ -1,20 +1,20 @@
 import { Coinbase } from "@coinbase/coinbase-sdk";
 import {
-    type Action,
-    type Plugin,
+    Action,
+    Plugin,
     elizaLogger,
-    type IAgentRuntime,
-    type Memory,
-    type HandlerCallback,
-    type State,
+    IAgentRuntime,
+    Memory,
+    HandlerCallback,
+    State,
     composeContext,
     generateObject,
     ModelClass,
-    type Provider,
+    Provider,
 } from "@elizaos/core";
 import { executeTradeAndCharityTransfer, getWalletDetails } from "../utils";
 import { tradeTemplate } from "../templates";
-import { isTradeContent, type TradeContent, TradeSchema } from "../types";
+import { isTradeContent, TradeContent, TradeSchema } from "../types";
 import { readFile } from "fs/promises";
 import { parse } from "csv-parse/sync";
 import path from "path";
@@ -75,9 +75,9 @@ export const tradeProvider: Provider = {
             return {
                 currentTrades: records.map((record: any) => ({
                     network: record["Network"] || undefined,
-                    amount: Number.parseFloat(record["From Amount"]) || undefined,
+                    amount: parseFloat(record["From Amount"]) || undefined,
                     sourceAsset: record["Source Asset"] || undefined,
-                    toAmount: Number.parseFloat(record["To Amount"]) || undefined,
+                    toAmount: parseFloat(record["To Amount"]) || undefined,
                     targetAsset: record["Target Asset"] || undefined,
                     status: record["Status"] || undefined,
                     transactionUrl: record["Transaction URL"] || "",

@@ -1,15 +1,15 @@
 import {
-    type Action,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    Action,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
+    State,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass
 } from "@elizaos/core";
-import { type NoteContent, noteSchema, isValidNote } from "../types";
+import { NoteContent, noteSchema, isValidNote } from "../types";
 import { getObsidian }  from "../helper";
 import { noteTemplate } from "../templates/note";
 

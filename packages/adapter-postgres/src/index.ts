@@ -5,13 +5,13 @@ import pg from "pg";
 type Pool = pg.Pool;
 
 import {
-    type Account,
-    type Actor,
+    Account,
+    Actor,
     DatabaseAdapter,
     EmbeddingProvider,
-    type GoalStatus,
-    type Participant,
-    type RAGKnowledgeItem,
+    GoalStatus,
+    Participant,
+    RAGKnowledgeItem,
     elizaLogger,
     getEmbeddingConfig,
     type Goal,
@@ -22,7 +22,7 @@ import {
 } from "@elizaos/core";
 import fs from "fs";
 import path from "path";
-import type {
+import {
     QueryConfig,
     QueryConfigValues,
     QueryResult,
@@ -510,33 +510,6 @@ export class PostgresDatabaseAdapter
                         : rows[0].content,
             };
         }, "getMemoryById");
-    }
-
-    async getMemoriesByIds(
-        memoryIds: UUID[],
-        tableName?: string
-    ): Promise<Memory[]> {
-        return this.withDatabase(async () => {
-            if (memoryIds.length === 0) return [];
-            const placeholders = memoryIds.map((_, i) => `$${i + 1}`).join(",");
-            let sql = `SELECT * FROM memories WHERE id IN (${placeholders})`;
-            const queryParams: any[] = [...memoryIds];
-
-            if (tableName) {
-                sql += ` AND type = $${memoryIds.length + 1}`;
-                queryParams.push(tableName);
-            }
-
-            const { rows } = await this.pool.query(sql, queryParams);
-
-            return rows.map((row) => ({
-                ...row,
-                content:
-                    typeof row.content === "string"
-                        ? JSON.parse(row.content)
-                        : row.content,
-            }));
-        }, "getMemoriesByIds");
     }
 
     async createMemory(memory: Memory, tableName: string): Promise<void> {
@@ -1323,7 +1296,7 @@ export class PostgresDatabaseAdapter
             }
 
             const { rows } = await this.pool.query(sql, [tableName, roomId]);
-            return Number.parseInt(rows[0].count);
+            return parseInt(rows[0].count);
         }, "countMemories");
     }
 

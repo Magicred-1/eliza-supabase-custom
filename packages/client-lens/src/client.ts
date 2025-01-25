@@ -1,17 +1,17 @@
-import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, elizaLogger } from "@elizaos/core";
 import {
-    type AnyPublicationFragment,
+    AnyPublicationFragment,
     LensClient as LensClientCore,
     production,
     LensTransactionStatusType,
     LimitType,
     NotificationType,
-    type ProfileFragment,
+    ProfileFragment,
     PublicationType,
     FeedEventItemType,
 } from "@lens-protocol/client";
-import type { Profile, BroadcastResult } from "./types";
-import type { PrivateKeyAccount } from "viem";
+import { Profile, BroadcastResult } from "./types";
+import { PrivateKeyAccount } from "viem";
 import { getProfilePictureUri, handleBroadcastResult, omit } from "./utils";
 
 export class LensClient {
@@ -69,7 +69,7 @@ export class LensClient {
 
     async createPublication(
         contentURI: string,
-        onchain = false,
+        onchain: boolean = false,
         commentOn?: string
     ): Promise<AnyPublicationFragment | null | undefined> {
         try {
@@ -129,7 +129,7 @@ export class LensClient {
 
     async getPublicationsFor(
         profileId: string,
-        limit = 50
+        limit: number = 50
     ): Promise<AnyPublicationFragment[]> {
         const timeline: AnyPublicationFragment[] = [];
         let next: any | undefined = undefined;
@@ -226,7 +226,7 @@ export class LensClient {
 
     async getTimeline(
         profileId: string,
-        limit = 10
+        limit: number = 10
     ): Promise<AnyPublicationFragment[]> {
         try {
             if (!this.authenticated) {

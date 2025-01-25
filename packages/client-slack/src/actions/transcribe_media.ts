@@ -4,15 +4,15 @@ import {
     parseJSONObjectFromText,
 } from "@elizaos/core";
 import {
-    type Action,
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type Handler,
-    type IAgentRuntime,
-    type Memory,
+    Action,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    Handler,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 
 export const transcriptionTemplate = `# Transcription of media file

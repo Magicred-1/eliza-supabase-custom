@@ -31,10 +31,10 @@ const config = {
                 id: "community",
                 path: "community",
                 routeBasePath: "community",
-                sidebarItemsGenerator: async ({
+                sidebarItemsGenerator: async function ({
                     defaultSidebarItemsGenerator,
                     ...args
-                }) => {
+                }) {
                     const sidebarItems =
                         await defaultSidebarItemsGenerator(args);
                     return sidebarItems

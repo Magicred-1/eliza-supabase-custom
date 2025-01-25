@@ -1,5 +1,5 @@
 import { SlackClientProvider } from "../providers/slack-client.provider";
-import type { SlackConfig } from "../types/slack-types";
+import { SlackConfig } from "../types/slack-types";
 import { config } from "dotenv";
 import { resolve } from "path";
 import { elizaLogger } from "@elizaos/core";

@@ -1,9 +1,9 @@
-import type {
+import {
     IAgentRuntime,
-    Actor,
-    Content,
-    Memory,
-    UUID,
+    type Actor,
+    type Content,
+    type Memory,
+    type UUID,
 } from "./types.ts";
 
 /**

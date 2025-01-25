@@ -9,7 +9,7 @@ import {
     TransferTransactionsFactory,
     TransactionsFactoryConfig,
     Token,
-    type Transaction,
+    Transaction,
     TokenManagementTransactionsFactory,
 } from "@multiversx/sdk-core";
 import { denominateAmount } from "../utils/amount";

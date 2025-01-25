@@ -1,13 +1,13 @@
 import {
-    type Action,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    Action,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
+    State,
     elizaLogger,
 } from "@elizaos/core";
 import fs from "fs";
-import type { DeployContractParams } from "../types";
+import { DeployContractParams } from "../types";
 import { ClientProvider } from "../providers/client";
 import { getParamsWithLLM } from "../utils/llm";
 

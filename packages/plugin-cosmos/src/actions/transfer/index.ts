@@ -1,11 +1,11 @@
 import {
     composeContext,
     generateObjectDeprecated,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 import { initWalletChainsData } from "../../providers/wallet/utils";
 import { cosmosTransferTemplate } from "../../templates";

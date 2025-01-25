@@ -1,11 +1,11 @@
 import {
     composeContext,
     generateText,
-    type IAgentRuntime,
-    type Memory,
+    IAgentRuntime,
+    Memory,
     ModelClass,
     parseJSONObjectFromText,
-    type State,
+    State,
 } from "@elizaos/core";
 
 export async function getParamsWithLLM<T>(
@@ -13,7 +13,7 @@ export async function getParamsWithLLM<T>(
     message: Memory,
     template: string,
     state: State = null,
-    maxAttempts = 5
+    maxAttempts: number = 5
 ): Promise<T | null> {
     const context = composeContext({
         state: {

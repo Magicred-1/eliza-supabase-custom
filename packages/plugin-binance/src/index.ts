@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { priceCheck } from "./actions/priceCheck";
 import { spotBalance } from "./actions/spotBalance";
 import { spotTrade } from "./actions/spotTrade";

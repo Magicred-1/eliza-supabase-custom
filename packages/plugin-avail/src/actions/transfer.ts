@@ -1,11 +1,11 @@
 import {
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
     type Action,
     elizaLogger,
     composeContext,
@@ -19,8 +19,8 @@ import {
     getKeyringFromSeed,
     isValidAddress,
 } from "avail-js-sdk";
-import type { ISubmittableResult } from "@polkadot/types/types/extrinsic";
-import type { H256 } from "@polkadot/types/interfaces/runtime";
+import { ISubmittableResult } from "@polkadot/types/types/extrinsic";
+import { H256 } from "@polkadot/types/interfaces/runtime";
 
 export interface TransferContent extends Content {
     recipient: string;
@@ -144,19 +144,19 @@ export default {
                 );
 
                 // Transaction call
-                const txResult:ISubmittableResult = await new Promise(
+                const txResult = await new Promise<ISubmittableResult>(
                     (res) => {
                         api.tx.balances
                             .transferKeepAlive(content.recipient, amount)
                             .signAndSend(
                                 keyring,
                                 options,
-                                (result) => {
+                                (result: ISubmittableResult) => {
                                     elizaLogger.log(
                                         `Tx status: ${result.status}`
                                     );
                                     if (result.isFinalized || result.isError) {
-                                        res(result as any);
+                                        res(result);
                                     }
                                 }
                             );

@@ -1,8 +1,8 @@
 import {
-  type Connection,
+  Connection,
   PublicKey,
   Transaction,
-  type TransactionInstruction,
+  TransactionInstruction,
   SystemProgram,
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";

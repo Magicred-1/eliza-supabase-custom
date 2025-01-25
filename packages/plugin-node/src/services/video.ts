@@ -1,8 +1,8 @@
 import {
-    type IAgentRuntime,
-    type ITranscriptionService,
-    type IVideoService,
-    type Media,
+    IAgentRuntime,
+    ITranscriptionService,
+    IVideoService,
+    Media,
     Service,
     ServiceType,
     stringToUuid,
@@ -20,7 +20,7 @@ export class VideoService extends Service implements IVideoService {
     private dataDir = "./content_cache";
 
     private queue: string[] = [];
-    private processing = false;
+    private processing: boolean = false;
 
     constructor() {
         super();

@@ -1,14 +1,14 @@
 import {
     elizaLogger,
     getEmbeddingZeroVector,
-    type IAgentRuntime,
+    IAgentRuntime,
     stringToUuid,
     type Memory,
     type UUID,
 } from "@elizaos/core";
 import { publicationUuid } from "./utils";
-import type { LensClient } from "./client";
-import type { AnyPublicationFragment } from "@lens-protocol/client";
+import { LensClient } from "./client";
+import { AnyPublicationFragment } from "@lens-protocol/client";
 
 export function createPublicationMemory({
     roomId,

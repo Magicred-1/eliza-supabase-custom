@@ -2,9 +2,10 @@ import { PGLiteDatabaseAdapter } from "@elizaos/adapter-pglite";
 import { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
 import { RedisClient } from "@elizaos/adapter-redis";
 import { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
-// import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
+import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
 import { AutoClientInterface } from "@elizaos/client-auto";
 import { DiscordClientInterface } from "@elizaos/client-discord";
+import { FarcasterAgentClient } from "@elizaos/client-farcaster";
 import { LensAgentClient } from "@elizaos/client-lens";
 import { SlackClientInterface } from "@elizaos/client-slack";
 import { TelegramClientInterface } from "@elizaos/client-telegram";
@@ -33,12 +34,7 @@ import {
     settings,
     stringToUuid,
     validateCharacterConfig,
-    Character as CoreCharacter,
 } from "@elizaos/core";
-
-interface Character extends CoreCharacter {
-    __source?: string;
-}
 
 import { zgPlugin } from "@elizaos/plugin-0g";
 
@@ -48,10 +44,10 @@ import createGoatPlugin from "@elizaos/plugin-goat";
 // import { DirectClient } from "@elizaos/client-direct";
 import { ThreeDGenerationPlugin } from "@elizaos/plugin-3d-generation";
 import { abstractPlugin } from "@elizaos/plugin-abstract";
-// import { alloraPlugin } from "@elizaos/plugin-allora";
+import { alloraPlugin } from "@elizaos/plugin-allora";
 import { aptosPlugin } from "@elizaos/plugin-aptos";
-// import { artheraPlugin } from "@elizaos/plugin-arthera";
-// import { availPlugin } from "@elizaos/plugin-avail";
+import { artheraPlugin } from "@elizaos/plugin-arthera";
+import { availPlugin } from "@elizaos/plugin-avail";
 import { avalanchePlugin } from "@elizaos/plugin-avalanche";
 import { binancePlugin } from "@elizaos/plugin-binance";
 import {
@@ -62,46 +58,47 @@ import {
     tradePlugin,
     webhookPlugin,
 } from "@elizaos/plugin-coinbase";
-// import { coinmarketcapPlugin } from "@elizaos/plugin-coinmarketcap";
-// import { coingeckoPlugin } from "@elizaos/plugin-coingecko";
+import { coinmarketcapPlugin } from "@elizaos/plugin-coinmarketcap";
+import { coingeckoPlugin } from "@elizaos/plugin-coingecko";
 import { confluxPlugin } from "@elizaos/plugin-conflux";
-// import { createCosmosPlugin } from "@elizaos/plugin-cosmos";
+import { createCosmosPlugin } from "@elizaos/plugin-cosmos";
 import { cronosZkEVMPlugin } from "@elizaos/plugin-cronoszkevm";
 import { echoChambersPlugin } from "@elizaos/plugin-echochambers";
 import { evmPlugin } from "@elizaos/plugin-evm";
 import { flowPlugin } from "@elizaos/plugin-flow";
 import { fuelPlugin } from "@elizaos/plugin-fuel";
-// import { genLayerPlugin } from "@elizaos/plugin-genlayer";
+import { genLayerPlugin } from "@elizaos/plugin-genlayer";
 import { imageGenerationPlugin } from "@elizaos/plugin-image-generation";
 import { lensPlugin } from "@elizaos/plugin-lensNetwork";
 import { multiversxPlugin } from "@elizaos/plugin-multiversx";
 import { nearPlugin } from "@elizaos/plugin-near";
 import { nftGenerationPlugin } from "@elizaos/plugin-nft-generation";
 import { createNodePlugin } from "@elizaos/plugin-node";
-// import { obsidianPlugin } from "@elizaos/plugin-obsidian";
-// import { sgxPlugin } from "@elizaos/plugin-sgx";
+import { obsidianPlugin } from "@elizaos/plugin-obsidian";
+import { sgxPlugin } from "@elizaos/plugin-sgx";
 import { solanaPlugin } from "@elizaos/plugin-solana";
-import { solanaAgentkitPlugin } from "@elizaos/plugin-solana-agent-kit";
-// import { autonomePlugin } from "@elizaos/plugin-autonome";
+import { solanaAgentkitPlguin } from "@elizaos/plugin-solana-agentkit";
+import { autonomePlugin } from "@elizaos/plugin-autonome";
 import { storyPlugin } from "@elizaos/plugin-story";
 import { suiPlugin } from "@elizaos/plugin-sui";
 import { TEEMode, teePlugin } from "@elizaos/plugin-tee";
-// import { teeLogPlugin } from "@elizaos/plugin-tee-log";
-// import { teeMarlinPlugin } from "@elizaos/plugin-tee-marlin";
+import { teeLogPlugin } from "@elizaos/plugin-tee-log";
+import { teeMarlinPlugin } from "@elizaos/plugin-tee-marlin";
 import { tonPlugin } from "@elizaos/plugin-ton";
 import { webSearchPlugin } from "@elizaos/plugin-web-search";
+// import { rabbiTrader } from "@elizaos/plugin-rabbi-trader";
 
-// import { giphyPlugin } from "@elizaos/plugin-giphy";
-// import { letzAIPlugin } from "@elizaos/plugin-letzai";
-// import { thirdwebPlugin } from "@elizaos/plugin-thirdweb";
-// import { hyperliquidPlugin } from "@elizaos/plugin-hyperliquid";
+import { giphyPlugin } from "@elizaos/plugin-giphy";
+import { letzAIPlugin } from "@elizaos/plugin-letzai";
+import { thirdwebPlugin } from "@elizaos/plugin-thirdweb";
+import { hyperliquidPlugin } from "@elizaos/plugin-hyperliquid";
 import { zksyncEraPlugin } from "@elizaos/plugin-zksync-era";
 
-// import { OpacityAdapter } from "@elizaos/plugin-opacity";
+import { OpacityAdapter } from "@elizaos/plugin-opacity";
 import { openWeatherPlugin } from "@elizaos/plugin-open-weather";
-// import { stargazePlugin } from "@elizaos/plugin-stargaze";
-// import { akashPlugin } from "@elizaos/plugin-akash";
-// import { quaiPlugin } from "@elizaos/plugin-quai";
+import { stargazePlugin } from "@elizaos/plugin-stargaze";
+import { akashPlugin } from "@elizaos/plugin-akash";
+import { quaiPlugin } from "@elizaos/plugin-quai";
 import Database from "better-sqlite3";
 import fs from "fs";
 import net from "net";
@@ -215,15 +212,15 @@ async function loadCharacter(filePath: string): Promise<Character> {
     character.plugins = await handlePluginImporting(character.plugins);
     if (character.extends) {
         elizaLogger.info(
-            `Merging  ${character.name} character with parent characters`,
+            `Merging  ${character.name} character with parent characters`
         );
         for (const extendPath of character.extends) {
             const baseCharacter = await loadCharacter(
-                path.resolve(path.dirname(filePath), extendPath),
+                path.resolve(path.dirname(filePath), extendPath)
             );
             character = mergeCharacters(baseCharacter, character);
             elizaLogger.info(
-                `Merged ${character.name} with ${baseCharacter.name}`,
+                `Merged ${character.name} with ${baseCharacter.name}`
             );
         }
     }
@@ -231,7 +228,7 @@ async function loadCharacter(filePath: string): Promise<Character> {
 }
 
 export async function loadCharacters(
-    charactersArg: string,
+    charactersArg: string
 ): Promise<Character[]> {
     let characterPaths = charactersArg
         ?.split(",")
@@ -252,17 +249,17 @@ export async function loadCharacters(
                 path.resolve(
                     __dirname,
                     "characters",
-                    path.basename(characterPath),
+                    path.basename(characterPath)
                 ), // relative to agent/characters
                 path.resolve(
                     __dirname,
                     "../characters",
-                    path.basename(characterPath),
+                    path.basename(characterPath)
                 ), // relative to characters dir from agent
                 path.resolve(
                     __dirname,
                     "../../characters",
-                    path.basename(characterPath),
+                    path.basename(characterPath)
                 ), // relative to project root characters dir
             ];
 
@@ -271,7 +268,7 @@ export async function loadCharacters(
                 pathsToTry.map((p) => ({
                     path: p,
                     exists: fs.existsSync(p),
-                })),
+                }))
             );
 
             for (const tryPath of pathsToTry) {
@@ -284,7 +281,7 @@ export async function loadCharacters(
 
             if (content === null) {
                 elizaLogger.error(
-                    `Error loading character from ${characterPath}: File not found in any of the expected locations`,
+                    `Error loading character from ${characterPath}: File not found in any of the expected locations`
                 );
                 elizaLogger.error("Tried the following paths:");
                 pathsToTry.forEach((p) => elizaLogger.error(` - ${p}`));
@@ -296,11 +293,11 @@ export async function loadCharacters(
 
                 loadedCharacters.push(character);
                 elizaLogger.info(
-                    `Successfully loaded character from: ${resolvedPath}`,
+                    `Successfully loaded character from: ${resolvedPath}`
                 );
             } catch (e) {
                 elizaLogger.error(
-                    `Error parsing character from ${resolvedPath}: ${e}`,
+                    `Error parsing character from ${resolvedPath}: ${e}`
                 );
                 process.exit(1);
             }
@@ -333,11 +330,11 @@ async function handlePluginImporting(plugins: string[]) {
                 } catch (importError) {
                     elizaLogger.error(
                         `Failed to import plugin: ${plugin}`,
-                        importError,
+                        importError
                     );
                     return []; // Return null for failed imports
                 }
-            }),
+            })
         );
         return importedPlugins;
     } else {
@@ -347,7 +344,7 @@ async function handlePluginImporting(plugins: string[]) {
 
 export function getTokenForProvider(
     provider: ModelProviderName,
-    character: Character,
+    character: Character
 ): string | undefined {
     switch (provider) {
         // no key needed for llama_local or gaianet
@@ -518,7 +515,7 @@ function initializeDatabase(dataDir: string) {
         db.init()
             .then(() => {
                 elizaLogger.success(
-                    "Successfully connected to PostgreSQL database",
+                    "Successfully connected to PostgreSQL database"
                 );
             })
             .catch((error) => {
@@ -543,7 +540,7 @@ function initializeDatabase(dataDir: string) {
         db.init()
             .then(() => {
                 elizaLogger.success(
-                    "Successfully connected to SQLite database",
+                    "Successfully connected to SQLite database"
                 );
             })
             .catch((error) => {
@@ -557,7 +554,7 @@ function initializeDatabase(dataDir: string) {
 // also adds plugins from character file into the runtime
 export async function initializeClients(
     character: Character,
-    runtime: IAgentRuntime,
+    runtime: IAgentRuntime
 ) {
     // each client can only register once
     // and if we want two we can explicitly support it
@@ -589,6 +586,14 @@ export async function initializeClients(
         }
     }
 
+    if (clientTypes.includes(Clients.FARCASTER)) {
+        // why is this one different :(
+        const farcasterClient = new FarcasterAgentClient(runtime);
+        if (farcasterClient) {
+            farcasterClient.start();
+            clients.farcaster = farcasterClient;
+        }
+    }
     if (clientTypes.includes("lens")) {
         const lensClient = new LensAgentClient(runtime);
         lensClient.start();
@@ -628,7 +633,7 @@ export async function initializeClients(
                     const startedClient = await client.start(runtime);
                     const clientType = determineClientType(client);
                     elizaLogger.debug(
-                        `Initializing client of type: ${clientType}`,
+                        `Initializing client of type: ${clientType}`
                     );
                     clients[clientType] = startedClient;
                 }
@@ -649,7 +654,7 @@ export async function createAgent(
     character: Character,
     db: IDatabaseAdapter,
     cache: ICacheManager,
-    token: string,
+    token: string
 ): Promise<AgentRuntime> {
     elizaLogger.log(`Creating runtime for character ${character.name}`);
 
@@ -661,7 +666,7 @@ export async function createAgent(
     // Validate TEE configuration
     if (teeMode !== TEEMode.OFF && !walletSecretSalt) {
         elizaLogger.error(
-            "WALLET_SECRET_SALT required when TEE_MODE is enabled",
+            "WALLET_SECRET_SALT required when TEE_MODE is enabled"
         );
         throw new Error("Invalid TEE configuration");
     }
@@ -670,7 +675,7 @@ export async function createAgent(
 
     if (getSecret(character, "EVM_PRIVATE_KEY")) {
         goatPlugin = await createGoatPlugin((secret) =>
-            getSecret(character, secret),
+            getSecret(character, secret)
         );
     }
 
@@ -690,41 +695,41 @@ export async function createAgent(
     //     elizaLogger.log("Verifiable inference adapter initialized");
     // }
     // Initialize Opacity adapter if environment variables are present
-    // let verifiableInferenceAdapter;
-    // if (
-    //     process.env.OPACITY_TEAM_ID &&
-    //     process.env.OPACITY_CLOUDFLARE_NAME &&
-    //     process.env.OPACITY_PROVER_URL &&
-    //     process.env.VERIFIABLE_INFERENCE_ENABLED === "true"
-    // ) {
-    //     verifiableInferenceAdapter = new OpacityAdapter({
-    //         teamId: process.env.OPACITY_TEAM_ID,
-    //         teamName: process.env.OPACITY_CLOUDFLARE_NAME,
-    //         opacityProverUrl: process.env.OPACITY_PROVER_URL,
-    //         modelProvider: character.modelProvider,
-    //         token: token,
-    //     });
-    //     elizaLogger.log("Verifiable inference adapter initialized");
-    //     elizaLogger.log("teamId", process.env.OPACITY_TEAM_ID);
-    //     elizaLogger.log("teamName", process.env.OPACITY_CLOUDFLARE_NAME);
-    //     elizaLogger.log("opacityProverUrl", process.env.OPACITY_PROVER_URL);
-    //     elizaLogger.log("modelProvider", character.modelProvider);
-    //     elizaLogger.log("token", token);
-    // }
-    // if (
-    //     process.env.PRIMUS_APP_ID &&
-    //     process.env.PRIMUS_APP_SECRET &&
-    //     process.env.VERIFIABLE_INFERENCE_ENABLED === "true"
-    // ) {
-    //     verifiableInferenceAdapter = new PrimusAdapter({
-    //         appId: process.env.PRIMUS_APP_ID,
-    //         appSecret: process.env.PRIMUS_APP_SECRET,
-    //         attMode: "proxytls",
-    //         modelProvider: character.modelProvider,
-    //         token,
-    //     });
-    //     elizaLogger.log("Verifiable inference primus adapter initialized");
-    // }
+    let verifiableInferenceAdapter;
+    if (
+        process.env.OPACITY_TEAM_ID &&
+        process.env.OPACITY_CLOUDFLARE_NAME &&
+        process.env.OPACITY_PROVER_URL &&
+        process.env.VERIFIABLE_INFERENCE_ENABLED === "true"
+    ) {
+        verifiableInferenceAdapter = new OpacityAdapter({
+            teamId: process.env.OPACITY_TEAM_ID,
+            teamName: process.env.OPACITY_CLOUDFLARE_NAME,
+            opacityProverUrl: process.env.OPACITY_PROVER_URL,
+            modelProvider: character.modelProvider,
+            token: token,
+        });
+        elizaLogger.log("Verifiable inference adapter initialized");
+        elizaLogger.log("teamId", process.env.OPACITY_TEAM_ID);
+        elizaLogger.log("teamName", process.env.OPACITY_CLOUDFLARE_NAME);
+        elizaLogger.log("opacityProverUrl", process.env.OPACITY_PROVER_URL);
+        elizaLogger.log("modelProvider", character.modelProvider);
+        elizaLogger.log("token", token);
+    }
+    if (
+        process.env.PRIMUS_APP_ID &&
+        process.env.PRIMUS_APP_SECRET &&
+        process.env.VERIFIABLE_INFERENCE_ENABLED === "true"
+    ) {
+        verifiableInferenceAdapter = new PrimusAdapter({
+            appId: process.env.PRIMUS_APP_ID,
+            appSecret: process.env.PRIMUS_APP_SECRET,
+            attMode: "proxytls",
+            modelProvider: character.modelProvider,
+            token,
+        });
+        elizaLogger.log("Verifiable inference primus adapter initialized");
+    }
 
     return new AgentRuntime({
         databaseAdapter: db,
@@ -746,9 +751,9 @@ export async function createAgent(
                 ? solanaPlugin
                 : null,
             getSecret(character, "SOLANA_PRIVATE_KEY")
-                ? solanaAgentkitPlugin
+                ? solanaAgentkitPlguin
                 : null,
-            // getSecret(character, "AUTONOME_JWT_TOKEN") ? autonomePlugin : null,
+            getSecret(character, "AUTONOME_JWT_TOKEN") ? autonomePlugin : null,
             (getSecret(character, "NEAR_ADDRESS") ||
                 getSecret(character, "NEAR_WALLET_PUBLIC_KEY")) &&
             getSecret(character, "NEAR_WALLET_SECRET_KEY")
@@ -759,13 +764,13 @@ export async function createAgent(
                 getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
                 ? evmPlugin
                 : null,
-            // getSecret(character, "COSMOS_RECOVERY_PHRASE") &&
-            //     getSecret(character, "COSMOS_AVAILABLE_CHAINS") &&
-            //     createCosmosPlugin(),
+            getSecret(character, "COSMOS_RECOVERY_PHRASE") &&
+                getSecret(character, "COSMOS_AVAILABLE_CHAINS") &&
+                createCosmosPlugin(),
             (getSecret(character, "SOLANA_PUBLIC_KEY") ||
                 (getSecret(character, "WALLET_PUBLIC_KEY") &&
                     !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith(
-                        "0x",
+                        "0x"
                     ))) &&
             getSecret(character, "SOLANA_ADMIN_PUBLIC_KEY") &&
             getSecret(character, "SOLANA_PRIVATE_KEY") &&
@@ -773,9 +778,9 @@ export async function createAgent(
                 ? nftGenerationPlugin
                 : null,
             getSecret(character, "ZEROG_PRIVATE_KEY") ? zgPlugin : null,
-            // getSecret(character, "COINMARKETCAP_API_KEY")
-            //     ? coinmarketcapPlugin
-            //     : null,
+            getSecret(character, "COINMARKETCAP_API_KEY")
+                ? coinmarketcapPlugin
+                : null,
             getSecret(character, "COINBASE_COMMERCE_KEY")
                 ? coinbaseCommercePlugin
                 : null,
@@ -788,22 +793,22 @@ export async function createAgent(
                 ? imageGenerationPlugin
                 : null,
             getSecret(character, "FAL_API_KEY") ? ThreeDGenerationPlugin : null,
-            // ...(getSecret(character, "COINBASE_API_KEY") &&
-            // getSecret(character, "COINBASE_PRIVATE_KEY")
-            //     ? [
-            //           coinbaseMassPaymentsPlugin,
-            //           tradePlugin,
-            //           tokenContractPlugin,
-            //           advancedTradePlugin,
-            //       ]
-            //     : []),
-            // ...(teeMode !== TEEMode.OFF && walletSecretSalt ? [teePlugin] : []),
-            // getSecret(character, "SGX") ? sgxPlugin : null,
-            // getSecret(character, "ENABLE_TEE_LOG") &&
-            // ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
-            //     getSecret(character, "SGX"))
-            //     ? teeLogPlugin
-            //     : null,
+            ...(getSecret(character, "COINBASE_API_KEY") &&
+            getSecret(character, "COINBASE_PRIVATE_KEY")
+                ? [
+                      coinbaseMassPaymentsPlugin,
+                      tradePlugin,
+                      tokenContractPlugin,
+                      advancedTradePlugin,
+                  ]
+                : []),
+            ...(teeMode !== TEEMode.OFF && walletSecretSalt ? [teePlugin] : []),
+            getSecret(character, "SGX") ? sgxPlugin : null,
+            getSecret(character, "ENABLE_TEE_LOG") &&
+            ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
+                getSecret(character, "SGX"))
+                ? teeLogPlugin
+                : null,
             getSecret(character, "COINBASE_API_KEY") &&
             getSecret(character, "COINBASE_PRIVATE_KEY") &&
             getSecret(character, "COINBASE_NOTIFICATION_URI")
@@ -811,12 +816,10 @@ export async function createAgent(
                 : null,
             goatPlugin,
             getSecret(character, "COINGECKO_API_KEY") ||
-            // getSecret(character, "COINGECKO_PRO_API_KEY")
-            //     ? coingeckoPlugin
-            //     : null,
-            getSecret(character, "EVM_PROVIDER_URL")
-                ? goatPlugin
+            getSecret(character, "COINGECKO_PRO_API_KEY")
+                ? coingeckoPlugin
                 : null,
+            getSecret(character, "EVM_PROVIDER_URL") ? goatPlugin : null,
             getSecret(character, "ABSTRACT_PRIVATE_KEY")
                 ? abstractPlugin
                 : null,
@@ -838,9 +841,9 @@ export async function createAgent(
             getSecret(character, "CRONOSZKEVM_PRIVATE_KEY")
                 ? cronosZkEVMPlugin
                 : null,
-            // getSecret(character, "TEE_MARLIN") ? teeMarlinPlugin : null,
+            getSecret(character, "TEE_MARLIN") ? teeMarlinPlugin : null,
             getSecret(character, "TON_PRIVATE_KEY") ? tonPlugin : null,
-            // getSecret(character, "THIRDWEB_SECRET_KEY") ? thirdwebPlugin : null,
+            getSecret(character, "THIRDWEB_SECRET_KEY") ? thirdwebPlugin : null,
             getSecret(character, "SUI_PRIVATE_KEY") ? suiPlugin : null,
             getSecret(character, "STORY_PRIVATE_KEY") ? storyPlugin : null,
             getSecret(character, "FUEL_PRIVATE_KEY") ? fuelPlugin : null,
@@ -851,35 +854,35 @@ export async function createAgent(
             getSecret(character, "ECHOCHAMBERS_API_KEY")
                 ? echoChambersPlugin
                 : null,
-            // getSecret(character, "LETZAI_API_KEY") ? letzAIPlugin : null,
-            // getSecret(character, "STARGAZE_ENDPOINT") ? stargazePlugin : null,
-            // getSecret(character, "GIPHY_API_KEY") ? giphyPlugin : null,
-            // getSecret(character, "GENLAYER_PRIVATE_KEY")
-            //     ? genLayerPlugin
-            //     : null,
-            // getSecret(character, "AVAIL_SEED") &&
-            // getSecret(character, "AVAIL_APP_ID")
-            //     ? availPlugin
-            //     : null,
-            // getSecret(character, "OPEN_WEATHER_API_KEY")
-            //     ? openWeatherPlugin
-            //     : null,
-            // getSecret(character, "OBSIDIAN_API_TOKEN") ? obsidianPlugin : null,
-            // getSecret(character, "ARTHERA_PRIVATE_KEY")?.startsWith("0x")
-            //     ? artheraPlugin
-            //     : null,
-            // getSecret(character, "ALLORA_API_KEY") ? alloraPlugin : null,
-            // getSecret(character, "HYPERLIQUID_PRIVATE_KEY")
-            //     ? hyperliquidPlugin
-            //     : null,
-            // getSecret(character, "HYPERLIQUID_TESTNET")
-            //     ? hyperliquidPlugin
-            //     : null,
-            // getSecret(character, "AKASH_MNEMONIC") &&
-            // getSecret(character, "AKASH_WALLET_ADDRESS")
-            //     ? akashPlugin
-            //     : null,
-            // getSecret(character, "QUAI_PRIVATE_KEY") ? quaiPlugin : null,
+            getSecret(character, "LETZAI_API_KEY") ? letzAIPlugin : null,
+            getSecret(character, "STARGAZE_ENDPOINT") ? stargazePlugin : null,
+            getSecret(character, "GIPHY_API_KEY") ? giphyPlugin : null,
+            getSecret(character, "GENLAYER_PRIVATE_KEY")
+                ? genLayerPlugin
+                : null,
+            getSecret(character, "AVAIL_SEED") &&
+            getSecret(character, "AVAIL_APP_ID")
+                ? availPlugin
+                : null,
+            getSecret(character, "OPEN_WEATHER_API_KEY")
+                ? openWeatherPlugin
+                : null,
+            getSecret(character, "OBSIDIAN_API_TOKEN") ? obsidianPlugin : null,
+            getSecret(character, "ARTHERA_PRIVATE_KEY")?.startsWith("0x")
+                ? artheraPlugin
+                : null,
+            getSecret(character, "ALLORA_API_KEY") ? alloraPlugin : null,
+            getSecret(character, "HYPERLIQUID_PRIVATE_KEY")
+                ? hyperliquidPlugin
+                : null,
+            getSecret(character, "HYPERLIQUID_TESTNET")
+                ? hyperliquidPlugin
+                : null,
+            getSecret(character, "AKASH_MNEMONIC") &&
+            getSecret(character, "AKASH_WALLET_ADDRESS")
+                ? akashPlugin
+                : null,
+            getSecret(character, "QUAI_PRIVATE_KEY") ? quaiPlugin : null,
         ].filter(Boolean),
         providers: [],
         actions: [],
@@ -887,14 +890,14 @@ export async function createAgent(
         managers: [],
         cacheManager: cache,
         fetch: logFetch,
-        // verifiableInferenceAdapter,
+        verifiableInferenceAdapter,
     });
 }
 
 function initializeFsCache(baseDir: string, character: Character) {
     if (!character?.id) {
         throw new Error(
-            "initializeFsCache requires id to be set in character definition",
+            "initializeFsCache requires id to be set in character definition"
         );
     }
     const cacheDir = path.resolve(baseDir, character.id, "cache");
@@ -906,7 +909,7 @@ function initializeFsCache(baseDir: string, character: Character) {
 function initializeDbCache(character: Character, db: IDatabaseCacheAdapter) {
     if (!character?.id) {
         throw new Error(
-            "initializeFsCache requires id to be set in character definition",
+            "initializeFsCache requires id to be set in character definition"
         );
     }
     const cache = new CacheManager(new DbCacheAdapter(db, character.id));
@@ -917,7 +920,7 @@ function initializeCache(
     cacheStore: string,
     character: Character,
     baseDir?: string,
-    db?: IDatabaseCacheAdapter,
+    db?: IDatabaseCacheAdapter
 ) {
     switch (cacheStore) {
         case CacheStore.REDIS:
@@ -926,11 +929,11 @@ function initializeCache(
                 const redisClient = new RedisClient(process.env.REDIS_URL);
                 if (!character?.id) {
                     throw new Error(
-                        "CacheStore.REDIS requires id to be set in character definition",
+                        "CacheStore.REDIS requires id to be set in character definition"
                     );
                 }
                 return new CacheManager(
-                    new DbCacheAdapter(redisClient, character.id), // Using DbCacheAdapter since RedisClient also implements IDatabaseCacheAdapter
+                    new DbCacheAdapter(redisClient, character.id) // Using DbCacheAdapter since RedisClient also implements IDatabaseCacheAdapter
                 );
             } else {
                 throw new Error("REDIS_URL environment variable is not set.");
@@ -942,7 +945,7 @@ function initializeCache(
                 return initializeDbCache(character, db);
             } else {
                 throw new Error(
-                    "Database adapter is not provided for CacheStore.Database.",
+                    "Database adapter is not provided for CacheStore.Database."
                 );
             }
 
@@ -950,14 +953,14 @@ function initializeCache(
             elizaLogger.info("Using File System Cache...");
             if (!baseDir) {
                 throw new Error(
-                    "baseDir must be provided for CacheStore.FILESYSTEM.",
+                    "baseDir must be provided for CacheStore.FILESYSTEM."
                 );
             }
             return initializeFsCache(baseDir, character);
 
         default:
             throw new Error(
-                `Invalid cache store: ${cacheStore} or required configuration missing.`,
+                `Invalid cache store: ${cacheStore} or required configuration missing.`
             );
     }
 }
@@ -965,7 +968,7 @@ function initializeCache(
 // Modify the startAgent function to handle source tracking
 async function startAgent(
     character: Character,
-    directClient: DirectClient,
+    directClient: DirectClient
 ): Promise<AgentRuntime> {
     try {
         character.id ??= stringToUuid(character.name);
@@ -986,7 +989,7 @@ async function startAgent(
             process.env.CACHE_STORE ?? CacheStore.DATABASE,
             character,
             "",
-            db,
+            db
         );
 
         const runtime = await createAgent(character, db, cache, token);
@@ -1043,9 +1046,8 @@ async function startAgents() {
         // Stop agents removed from Supabase or marked inactive
         for (const [id, runtime] of activeAgents.entries()) {
             if (
-                runtime.character.__source === "supabase" &&
                 !currentSupabaseIds.has(
-                    id as `${string}-${string}-${string}-${string}-${string}`,
+                    id as `${string}-${string}-${string}-${string}-${string}`
                 )
             ) {
                 elizaLogger.info(`Stopping Supabase agent ${id}`);
@@ -1067,18 +1069,19 @@ async function startAgents() {
                         JSON.stringify(config)
                     ) {
                         elizaLogger.info(`Updating agent ${config.id}`);
+                        // await existing.shutdown();
                         directClient.unregisterAgent(existing);
                         activeAgents.delete(config.id);
 
                         const newRuntime = await startAgent(
                             config,
-                            directClient,
+                            directClient
                         );
                         activeAgents.set(config.id, newRuntime);
                     }
                 } else {
                     elizaLogger.info(
-                        `Starting new Supabase agent ${config.id}`,
+                        `Starting new Supabase agent ${config.id}`
                     );
                     const runtime = await startAgent(config, directClient);
                     activeAgents.set(config.id, runtime);
@@ -1086,7 +1089,7 @@ async function startAgents() {
             } catch (error) {
                 elizaLogger.error(
                     `Error processing Supabase config ${config.id}:`,
-                    error,
+                    error
                 );
             }
         }
@@ -1127,7 +1130,7 @@ async function startAgents() {
                     } catch (e) {
                         elizaLogger.error(
                             `Invalid configuration ${row.id}:`,
-                            e,
+                            e
                         );
                         return null;
                     }
@@ -1147,11 +1150,11 @@ async function startAgents() {
                 },
                 async (payload) => {
                     elizaLogger.debug(
-                        `Configuration change: ${payload.eventType}`,
+                        `Configuration change: ${payload.eventType}`
                     );
                     const updatedConfigs = await fetchSupabaseConfigs();
                     await handleSupabaseConfigUpdate(updatedConfigs);
-                },
+                }
             )
             .subscribe();
 
@@ -1180,7 +1183,7 @@ async function startAgents() {
             } catch (error) {
                 elizaLogger.error(
                     `Failed to start agent ${character.id}:`,
-                    error,
+                    error
                 );
             }
         }

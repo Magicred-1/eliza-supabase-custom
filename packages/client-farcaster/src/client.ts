@@ -1,7 +1,6 @@
-import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
-import { type NeynarAPIClient, isApiErrorResponse } from "@neynar/nodejs-sdk";
-import type { NeynarCastResponse, Cast, Profile, FidRequest, CastId } from "./types";
-import type { FarcasterConfig } from "./environment";
+import { IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { NeynarAPIClient, isApiErrorResponse } from "@neynar/nodejs-sdk";
+import { NeynarCastResponse, Cast, Profile, FidRequest, CastId } from "./types";
 
 export class FarcasterClient {
     runtime: IAgentRuntime;
@@ -9,7 +8,6 @@ export class FarcasterClient {
     signerUuid: string;
     cache: Map<string, any>;
     lastInteractionTimestamp: Date;
-    farcasterConfig: FarcasterConfig;
 
     constructor(opts: {
         runtime: IAgentRuntime;
@@ -18,14 +16,12 @@ export class FarcasterClient {
         neynar: NeynarAPIClient;
         signerUuid: string;
         cache: Map<string, any>;
-        farcasterConfig: FarcasterConfig;
     }) {
         this.cache = opts.cache;
         this.runtime = opts.runtime;
         this.neynar = opts.neynar;
         this.signerUuid = opts.signerUuid;
         this.lastInteractionTimestamp = new Date();
-        this.farcasterConfig = opts.farcasterConfig;
     }
 
     async loadCastFromNeynarResponse(neynarResponse: any): Promise<Cast> {

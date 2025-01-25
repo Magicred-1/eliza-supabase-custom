@@ -1,7 +1,7 @@
 import { PassThrough } from "stream";
 import { Readable } from "node:stream";
 import { ReadableStream } from "node:stream/web";
-import { type IAgentRuntime, type ISpeechService, ServiceType } from "@elizaos/core";
+import { IAgentRuntime, ISpeechService, ServiceType } from "@elizaos/core";
 import { getWavHeader } from "./audioUtils.ts";
 import { Service } from "@elizaos/core";
 import { validateNodeConfig } from "../environment.ts";
@@ -12,8 +12,8 @@ function prependWavHeader(
     readable: Readable,
     audioLength: number,
     sampleRate: number,
-    channelCount = 1,
-    bitsPerSample = 16
+    channelCount: number = 1,
+    bitsPerSample: number = 16
 ): Readable {
     const wavHeader = getWavHeader(
         audioLength,
@@ -23,14 +23,14 @@ function prependWavHeader(
     );
     let pushedHeader = false;
     const passThrough = new PassThrough();
-    readable.on("data", (data) => {
+    readable.on("data", function (data) {
         if (!pushedHeader) {
             passThrough.push(wavHeader);
             pushedHeader = true;
         }
         passThrough.push(data);
     });
-    readable.on("end", () => {
+    readable.on("end", function () {
         passThrough.end();
     });
     return passThrough;
@@ -149,7 +149,7 @@ async function textToSpeech(runtime: IAgentRuntime, text: string) {
                     .getSetting("ELEVENLABS_OUTPUT_FORMAT")
                     .startsWith("pcm_")
             ) {
-                const sampleRate = Number.parseInt(
+                const sampleRate = parseInt(
                     runtime.getSetting("ELEVENLABS_OUTPUT_FORMAT").substring(4)
                 );
                 const withHeader = prependWavHeader(

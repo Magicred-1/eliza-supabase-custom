@@ -1,7 +1,7 @@
-import { elizaLogger, type Client, type IAgentRuntime, type Plugin } from "@elizaos/core";
+import { elizaLogger, Client, IAgentRuntime, Plugin } from "@elizaos/core";
 import { EchoChamberClient } from "./echoChamberClient";
 import { InteractionClient } from "./interactions";
-import type { EchoChamberConfig } from "./types";
+import { EchoChamberConfig } from "./types";
 import { validateEchoChamberConfig } from "./environment";
 
 export const EchoChamberClientInterface: Client = {
@@ -26,10 +26,9 @@ export const EchoChamberClientInterface: Client = {
                     runtime.getSetting("ECHOCHAMBERS_USERNAME") ||
                     `agent-${runtime.agentId}`,
                 model: runtime.modelProvider,
-                rooms: runtime
-                    .getSetting("ECHOCHAMBERS_ROOMS")
-                    ?.split(",")
-                    .map((r) => r.trim()) || ["general"],
+                defaultRoom:
+                    runtime.getSetting("ECHOCHAMBERS_DEFAULT_ROOM") ||
+                    "general",
             };
 
             elizaLogger.log("Starting EchoChambers client...");

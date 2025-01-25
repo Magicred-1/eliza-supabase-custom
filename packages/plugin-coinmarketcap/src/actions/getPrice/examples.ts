@@ -1,4 +1,4 @@
-import type { ActionExample } from "@elizaos/core";
+import { ActionExample } from "@elizaos/core";
 
 export const priceExamples: ActionExample[][] = [
     [

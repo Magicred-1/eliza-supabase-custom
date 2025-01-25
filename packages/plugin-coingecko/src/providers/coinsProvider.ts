@@ -1,4 +1,4 @@
-import { type IAgentRuntime, type Memory, type Provider, type State, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import axios from 'axios';
 import { getApiConfig, validateCoingeckoConfig } from '../environment';
 
@@ -12,9 +12,9 @@ const CACHE_KEY = 'coingecko:coins';
 const CACHE_TTL = 5 * 60; // 5 minutes
 const MAX_RETRIES = 3;
 
-async function fetchCoins(runtime: IAgentRuntime, includePlatform = false): Promise<CoinItem[]> {
+async function fetchCoins(runtime: IAgentRuntime, includePlatform: boolean = false): Promise<CoinItem[]> {
     const config = await validateCoingeckoConfig(runtime);
-    const { baseUrl, apiKey, headerKey } = getApiConfig(config);
+    const { baseUrl, apiKey } = getApiConfig(config);
 
     const response = await axios.get<CoinItem[]>(
         `${baseUrl}/coins/list`,
@@ -24,7 +24,7 @@ async function fetchCoins(runtime: IAgentRuntime, includePlatform = false): Prom
             },
             headers: {
                 'accept': 'application/json',
-                [headerKey]: apiKey
+                'x-cg-pro-api-key': apiKey
             },
             timeout: 5000 // 5 second timeout
         }
@@ -37,7 +37,7 @@ async function fetchCoins(runtime: IAgentRuntime, includePlatform = false): Prom
     return response.data;
 }
 
-async function fetchWithRetry(runtime: IAgentRuntime, includePlatform = false): Promise<CoinItem[]> {
+async function fetchWithRetry(runtime: IAgentRuntime, includePlatform: boolean = false): Promise<CoinItem[]> {
     let lastError: Error | null = null;
 
     for (let i = 0; i < MAX_RETRIES; i++) {
@@ -53,7 +53,7 @@ async function fetchWithRetry(runtime: IAgentRuntime, includePlatform = false): 
     throw lastError || new Error("Failed to fetch coins after multiple attempts");
 }
 
-async function getCoins(runtime: IAgentRuntime, includePlatform = false): Promise<CoinItem[]> {
+async function getCoins(runtime: IAgentRuntime, includePlatform: boolean = false): Promise<CoinItem[]> {
     try {
         // Try to get from cache first
         const cached = await runtime.cacheManager.get<CoinItem[]>(CACHE_KEY);
@@ -109,6 +109,6 @@ export const coinsProvider: Provider = {
 };
 
 // Helper function for actions to get raw coins data
-export async function getCoinsData(runtime: IAgentRuntime, includePlatform = false): Promise<CoinItem[]> {
+export async function getCoinsData(runtime: IAgentRuntime, includePlatform: boolean = false): Promise<CoinItem[]> {
     return getCoins(runtime, includePlatform);
 }

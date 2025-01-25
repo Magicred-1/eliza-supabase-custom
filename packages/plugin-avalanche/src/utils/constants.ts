@@ -1,4 +1,4 @@
-import type { Address } from "viem";
+import { Address } from "viem";
 
 const TOKEN_ADDRESSES: Record<string, Address> = {
     AVAX: "0x0000000000000000000000000000000000000000",

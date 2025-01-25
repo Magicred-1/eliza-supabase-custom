@@ -1,9 +1,9 @@
 import {
-    type Action,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    Action,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
+    State,
     elizaLogger,
     composeContext,
     ModelClass,
@@ -11,7 +11,7 @@ import {
     trimTokens,
     generateText,
 } from "@elizaos/core";
-import type { NoteContent } from "../types";
+import { NoteContent } from "../types";
 import { baseSummaryTemplate } from "../templates/summary";
 import { getObsidian }  from "../helper";
 

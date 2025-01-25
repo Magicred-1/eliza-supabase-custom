@@ -1,11 +1,11 @@
-import type { AwsS3Service } from "@elizaos/plugin-node";
+import { AwsS3Service } from "@elizaos/plugin-node";
 import {
     composeContext,
     elizaLogger,
     generateImage,
     getEmbeddingZeroVector,
-    type IAgentRuntime,
-    type Memory,
+    IAgentRuntime,
+    Memory,
     ServiceType,
     stringToUuid,
 } from "@elizaos/core";

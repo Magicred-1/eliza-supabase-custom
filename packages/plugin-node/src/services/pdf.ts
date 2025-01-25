@@ -1,11 +1,11 @@
 import {
-    type IAgentRuntime,
-    type IPdfService,
+    IAgentRuntime,
+    IPdfService,
     Service,
     ServiceType,
 } from "@elizaos/core";
-import { getDocument, type PDFDocumentProxy } from "pdfjs-dist";
-import type { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+import { getDocument, PDFDocumentProxy } from "pdfjs-dist";
+import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 
 export class PdfService extends Service implements IPdfService {
     static serviceType: ServiceType = ServiceType.PDF;

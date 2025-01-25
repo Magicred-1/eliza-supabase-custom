@@ -1,5 +1,5 @@
-import type { BinanceAccountInfo, BinanceBalance } from "../types/api/account";
-import type { BalanceCheckRequest, BalanceResponse } from "../types/internal/config";
+import { BinanceAccountInfo, BinanceBalance } from "../types/api/account";
+import { BalanceCheckRequest, BalanceResponse } from "../types/internal/config";
 import { BaseService } from "./base";
 
 /**
@@ -42,7 +42,7 @@ export class AccountService extends BaseService {
     ): BinanceBalance[] {
         return balances.filter(
             (balance) =>
-                Number.parseFloat(balance.free) > 0 || Number.parseFloat(balance.locked) > 0
+                parseFloat(balance.free) > 0 || parseFloat(balance.locked) > 0
         );
     }
 
@@ -84,7 +84,7 @@ export class AccountService extends BaseService {
                 return false;
             }
 
-            const available = Number.parseFloat(balance.free);
+            const available = parseFloat(balance.free);
             return available >= required;
         } catch (error) {
             throw this.handleError(error, `Balance check for ${asset}`);

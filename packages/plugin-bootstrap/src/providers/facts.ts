@@ -2,7 +2,7 @@ import {
     embed,
     MemoryManager,
     formatMessages,
-    type AgentRuntime as IAgentRuntime,
+    AgentRuntime as IAgentRuntime,
 } from "@elizaos/core";
 import type { Memory, Provider, State } from "@elizaos/core";
 import { formatFacts } from "../evaluators/fact.ts";

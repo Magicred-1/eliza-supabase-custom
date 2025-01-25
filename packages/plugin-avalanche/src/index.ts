@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import tokenMillCreate from "./actions/tokenMillCreate";
 import transfer from "./actions/transfer";
 import yakSwap from "./actions/yakSwap";

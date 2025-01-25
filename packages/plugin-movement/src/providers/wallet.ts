@@ -1,4 +1,4 @@
-import type {
+import {
     IAgentRuntime,
     ICacheManager,
     Memory,
@@ -36,7 +36,7 @@ interface Prices {
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey = "movement/wallet";
+    private cacheKey: string = "movement/wallet";
 
     constructor(
         private aptosClient: Aptos,

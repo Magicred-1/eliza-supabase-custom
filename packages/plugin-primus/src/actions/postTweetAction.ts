@@ -1,9 +1,9 @@
 import {
-    type Action,
+    Action,
     elizaLogger,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    IAgentRuntime,
+    Memory,
+    State,
 } from "@elizaos/core";
 import { TwitterScraper } from "../util/twitterScraper.ts";
 import {tokenPriceProvider} from "../providers/tokenPriceProvider.ts";

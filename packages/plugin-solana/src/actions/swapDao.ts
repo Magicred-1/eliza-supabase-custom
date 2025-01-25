@@ -1,11 +1,11 @@
 import {
-    type ActionExample,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    IAgentRuntime,
+    Memory,
     type Action,
     elizaLogger,
 } from "@elizaos/core";
-import { Connection, type Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { getQuote } from "./swapUtils.ts";
 import { getWalletKey } from "../keypairUtils.ts";
 

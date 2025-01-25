@@ -1,4 +1,4 @@
-import type { Content } from "@elizaos/core";
+import { Content } from "@elizaos/core";
 
 export interface SpheronComputeConfig {
     name: string;

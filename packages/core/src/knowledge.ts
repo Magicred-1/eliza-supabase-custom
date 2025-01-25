@@ -1,6 +1,6 @@
-import type { AgentRuntime } from "./runtime.ts";
+import { AgentRuntime } from "./runtime.ts";
 import { embed, getEmbeddingZeroVector } from "./embedding.ts";
-import type { KnowledgeItem, UUID, Memory } from "./types.ts";
+import { KnowledgeItem, UUID, type Memory } from "./types.ts";
 import { stringToUuid } from "./uuid.ts";
 import { splitChunks } from "./generation.ts";
 import elizaLogger from "./logger.ts";
@@ -67,8 +67,8 @@ async function get(
 async function set(
     runtime: AgentRuntime,
     item: KnowledgeItem,
-    chunkSize = 512,
-    bleed = 20
+    chunkSize: number = 512,
+    bleed: number = 20
 ) {
     await runtime.documentsManager.createMemory({
         id: item.id,

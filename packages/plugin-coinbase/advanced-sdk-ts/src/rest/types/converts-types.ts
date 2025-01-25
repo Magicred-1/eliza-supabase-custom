@@ -1,5 +1,5 @@
 // Create Convert Quote
-import type { RatConvertTrade, TradeIncentiveMetadata } from './common-types';
+import { RatConvertTrade, TradeIncentiveMetadata } from './common-types';
 
 export type CreateConvertQuoteRequest = {
     // Body Params

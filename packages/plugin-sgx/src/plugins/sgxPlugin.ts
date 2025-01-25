@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { sgxAttestationProvider } from "../providers/sgxAttestationProvider";
 
 export const sgxPlugin: Plugin = {

@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { postAction } from "./actions/post";
 
 export const twitterPlugin: Plugin = {

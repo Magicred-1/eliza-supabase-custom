@@ -1,12 +1,12 @@
 import {
-    type Action,
+    Action,
     composeContext,
     generateText,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 
 import { projectsTemplate } from "../template";

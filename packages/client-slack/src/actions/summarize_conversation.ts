@@ -8,18 +8,18 @@ import {
 } from "@elizaos/core";
 import { getActorDetails } from "@elizaos/core";
 import {
-    type Action,
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Media,
-    type Memory,
+    Action,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Media,
+    Memory,
     ModelClass,
-    type State,
+    State,
     elizaLogger,
 } from "@elizaos/core";
-import { type ISlackService, SLACK_SERVICE_TYPE } from "../types/slack-types";
+import { ISlackService, SLACK_SERVICE_TYPE } from "../types/slack-types";
 
 export const summarizationTemplate = `# Summarized so far (we are adding to this)
 {{currentSummary}}
@@ -95,7 +95,7 @@ const getDateRange = async (
                 if (!match) return null;
 
                 const [_, amount, unit] = match;
-                const value = Number.parseInt(amount);
+                const value = parseInt(amount);
 
                 if (isNaN(value)) return null;
 

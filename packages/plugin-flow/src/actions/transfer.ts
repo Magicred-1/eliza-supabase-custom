@@ -1,6 +1,6 @@
 import {
     composeContext,
-    type Content,
+    Content,
     elizaLogger,
     generateObjectArray,
     ModelClass,
@@ -21,7 +21,7 @@ import {
 } from "../providers/wallet.provider";
 import { transferTemplate } from "../templates";
 import { validateFlowConfig } from "../environment";
-import type { TransactionResponse } from "../types";
+import { TransactionResponse } from "../types";
 import { transactions } from "../assets/transaction.defs";
 import * as queries from "../queries";
 
@@ -135,7 +135,7 @@ export class TransferAction {
         const amount =
             typeof content.amount === "number"
                 ? content.amount
-                : Number.parseFloat(content.amount);
+                : parseFloat(content.amount);
 
         // Check if the wallet has enough balance to transfer
         const accountInfo = await queries.queryAccountBalanceInfo(

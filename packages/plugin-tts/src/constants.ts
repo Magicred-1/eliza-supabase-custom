@@ -237,20 +237,6 @@ export const VOICE_MAP: Record<string, VoiceOption[]> = {
       fullName: "Mary Narrative (Hebrew/Israeli)"
     }
     ],
-    'id': [
-    { 
-      name: "Ignatius", 
-      style: "Conversational", 
-      region: "Malay",
-      fullName: "Ignatius Conversational (Malay/Malay)"
-    },
-    { 
-      name: "Ignatius", 
-      style: "Narrative", 
-      region: "Malay",
-      fullName: "Ignatius Narrative (Malay/Malay)"
-    }
-    ],
     'ru': [
         { 
           name: "Andrei", 
@@ -265,34 +251,6 @@ export const VOICE_MAP: Record<string, VoiceOption[]> = {
           fullName: "Andrei Narrative (Russian/Russian)"
         }
       ],
-    'tl': [
-        { 
-          name: "Aiken", 
-          style: "Conversational", 
-          region: "Filipino",
-          fullName: "Aiken Conversational (Tagalog/Filipino)"
-        },
-        { 
-          name: "Aiken", 
-          style: "Narrative", 
-          region: "Filipino",
-          fullName: "Aiken Narrative (Tagalog/Filipino)"
-        }
-      ],
-    'mk': [
-    { 
-        name: "Aleksa", 
-        style: "Conversational", 
-        region: "Serbian",
-        fullName: "Aleksa Conversational (Serbian/Serbian)"
-    },
-    { 
-        name: "Aleksa", 
-        style: "Narrative", 
-        region: "Serbian",
-        fullName: "Aleksa Narrative (Serbian/Serbian)"
-    }
-    ],
     'ne': [
     { 
         name: "Anuj", 

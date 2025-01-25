@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import launchAgent from "./actions/launchAgent";
 
 export const autonomePlugin: Plugin = {

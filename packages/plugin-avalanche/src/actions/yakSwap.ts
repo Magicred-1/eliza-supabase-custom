@@ -1,18 +1,18 @@
 import {
-    type Action,
-    type ActionExample,
-    type IAgentRuntime,
-    type Memory,
-    type State,
-    type HandlerCallback,
+    Action,
+    ActionExample,
+    IAgentRuntime,
+    Memory,
+    State,
+    HandlerCallback,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass,
-    type Content,
+    Content,
 } from "@elizaos/core";
 import { approve, getTxReceipt, swap, getQuote } from "../utils";
-import type { Address } from "viem";
+import { Address } from "viem";
 import { validateAvalancheConfig } from "../environment";
 import { TOKEN_ADDRESSES, YAK_SWAP_CONFIG } from "../utils/constants";
 

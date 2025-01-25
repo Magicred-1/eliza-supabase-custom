@@ -1,4 +1,4 @@
-import type {
+import {
     IAgentRuntime,
     ICacheManager,
     Memory,
@@ -10,7 +10,7 @@ import {
     Aptos,
     AptosConfig,
     Ed25519PrivateKey,
-    type Network,
+    Network,
     PrivateKey,
     PrivateKeyVariants,
 } from "@aptos-labs/ts-sdk";
@@ -36,7 +36,7 @@ interface Prices {
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey = "aptos/wallet";
+    private cacheKey: string = "aptos/wallet";
 
     constructor(
         private aptosClient: Aptos,

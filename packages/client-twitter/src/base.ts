@@ -1,23 +1,23 @@
 import {
-    type Content,
-    type IAgentRuntime,
-    type IImageDescriptionService,
-    type Memory,
-    type State,
-    type UUID,
+    Content,
+    IAgentRuntime,
+    IImageDescriptionService,
+    Memory,
+    State,
+    UUID,
     getEmbeddingZeroVector,
     elizaLogger,
     stringToUuid,
     ActionTimelineType,
 } from "@elizaos/core";
 import {
-    type QueryTweetsResponse,
+    QueryTweetsResponse,
     Scraper,
     SearchMode,
-    type Tweet,
+    Tweet,
 } from "agent-twitter-client";
 import { EventEmitter } from "events";
-import type { TwitterConfig } from "./environment.ts";
+import { TwitterConfig } from "./environment.ts";
 
 export function extractAnswer(text: string): string {
     const startIndex = text.indexOf("Answer: ") + 8;
@@ -35,7 +35,7 @@ type TwitterProfile = {
 
 class RequestQueue {
     private queue: (() => Promise<any>)[] = [];
-    private processing = false;
+    private processing: boolean = false;
 
     async add<T>(request: () => Promise<T>): Promise<T> {
         return new Promise((resolve, reject) => {
@@ -91,7 +91,7 @@ export class ClientBase extends EventEmitter {
     directions: string;
     lastCheckedTweetId: bigint | null = null;
     imageDescriptionService: IImageDescriptionService;
-    temperature = 0.5;
+    temperature: number = 0.5;
 
     requestQueue: RequestQueue = new RequestQueue();
 
@@ -263,7 +263,7 @@ export class ClientBase extends EventEmitter {
             ? await this.twitterClient.fetchFollowingTimeline(count, [])
             : await this.twitterClient.fetchHomeTimeline(count, []);
 
-        elizaLogger.debug(homeTimeline, { depth: Number.POSITIVE_INFINITY });
+        elizaLogger.debug(homeTimeline, { depth: Infinity });
         const processedTimeline = homeTimeline
             .filter((t) => t.__typename !== "TweetWithVisibilityResults") // what's this about?
             .map((tweet) => {

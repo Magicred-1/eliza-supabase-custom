@@ -1,4 +1,4 @@
-import type {
+import {
     CancelOrderObject,
     ContractExpiryType,
     MarginType,

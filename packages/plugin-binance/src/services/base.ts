@@ -2,7 +2,7 @@ import { Spot } from "@binance/connector";
 import { elizaLogger } from "@elizaos/core";
 import { API_DEFAULTS } from "../constants/api";
 import { ERROR_MESSAGES } from "../constants/errors";
-import type { BinanceConfig, ServiceOptions } from "../types/internal/config";
+import { BinanceConfig, ServiceOptions } from "../types/internal/config";
 import {
     ApiError,
     AuthenticationError,

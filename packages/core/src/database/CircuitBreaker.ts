@@ -2,9 +2,9 @@ export type CircuitBreakerState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
 export class CircuitBreaker {
     private state: CircuitBreakerState = "CLOSED";
-    private failureCount = 0;
+    private failureCount: number = 0;
     private lastFailureTime?: number;
-    private halfOpenSuccesses = 0;
+    private halfOpenSuccesses: number = 0;
 
     private readonly failureThreshold: number;
     private readonly resetTimeout: number;

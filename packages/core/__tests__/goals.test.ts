@@ -5,14 +5,14 @@ import {
     createGoal,
 } from "../src/goals.ts";
 import {
-    type Goal,
+    Goal,
     GoalStatus,
-    type IAgentRuntime,
-    type Memory,
-    type State,
-    type UUID,
-    type Service,
-    type ServiceType,
+    IAgentRuntime,
+    Memory,
+    State,
+    UUID,
+    Service,
+    ServiceType,
 } from "../src/types.ts";
 import { CacheManager, MemoryCacheAdapter } from "../src/cache.ts";
 import { describe, expect, vi, beforeEach } from "vitest";
@@ -34,34 +34,34 @@ export const mockRuntime: IAgentRuntime = {
     serverUrl: "",
     token: null,
     messageManager: {
-        addEmbeddingToMemory: (_memory: Memory): Promise<Memory> => {
+        addEmbeddingToMemory: function (_memory: Memory): Promise<Memory> {
             throw new Error("Function not implemented.");
         },
-        getMemories: (_opts: {
+        getMemories: function (_opts: {
             roomId: UUID;
             count?: number;
             unique?: boolean;
             agentId?: UUID;
             start?: number;
             end?: number;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        getCachedEmbeddings: (
+        getCachedEmbeddings: function (
             _content: string
-        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> => {
+        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> {
             throw new Error("Function not implemented.");
         },
-        getMemoryById: (_id: UUID): Promise<Memory | null> => {
+        getMemoryById: function (_id: UUID): Promise<Memory | null> {
             throw new Error("Function not implemented.");
         },
-        getMemoriesByRoomIds: (_params: {
+        getMemoriesByRoomIds: function (_params: {
             roomIds: UUID[];
             agentId?: UUID;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        searchMemoriesByEmbedding: (
+        searchMemoriesByEmbedding: function (
             _embedding: number[],
             _opts: {
                 match_threshold?: number;
@@ -70,57 +70,57 @@ export const mockRuntime: IAgentRuntime = {
                 unique?: boolean;
                 agentId?: UUID;
             }
-        ): Promise<Memory[]> => {
+        ): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        createMemory: (
+        createMemory: function (
             _memory: Memory,
             _unique?: boolean
-        ): Promise<void> => {
+        ): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeMemory: (_memoryId: UUID): Promise<void> => {
+        removeMemory: function (_memoryId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeAllMemories: (_roomId: UUID): Promise<void> => {
+        removeAllMemories: function (_roomId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        countMemories: (
+        countMemories: function (
             _roomId: UUID,
             _unique?: boolean
-        ): Promise<number> => {
+        ): Promise<number> {
             throw new Error("Function not implemented.");
         },
     },
     descriptionManager: {
-        addEmbeddingToMemory: (_memory: Memory): Promise<Memory> => {
+        addEmbeddingToMemory: function (_memory: Memory): Promise<Memory> {
             throw new Error("Function not implemented.");
         },
-        getMemories: (_opts: {
+        getMemories: function (_opts: {
             roomId: UUID;
             count?: number;
             unique?: boolean;
             agentId?: UUID;
             start?: number;
             end?: number;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        getCachedEmbeddings: (
+        getCachedEmbeddings: function (
             _content: string
-        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> => {
+        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> {
             throw new Error("Function not implemented.");
         },
-        getMemoryById: (_id: UUID): Promise<Memory | null> => {
+        getMemoryById: function (_id: UUID): Promise<Memory | null> {
             throw new Error("Function not implemented.");
         },
-        getMemoriesByRoomIds: (_params: {
+        getMemoriesByRoomIds: function (_params: {
             roomIds: UUID[];
             agentId?: UUID;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        searchMemoriesByEmbedding: (
+        searchMemoriesByEmbedding: function (
             _embedding: number[],
             _opts: {
                 match_threshold?: number;
@@ -129,57 +129,57 @@ export const mockRuntime: IAgentRuntime = {
                 unique?: boolean;
                 agentId?: UUID;
             }
-        ): Promise<Memory[]> => {
+        ): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        createMemory: (
+        createMemory: function (
             _memory: Memory,
             _unique?: boolean
-        ): Promise<void> => {
+        ): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeMemory: (_memoryId: UUID): Promise<void> => {
+        removeMemory: function (_memoryId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeAllMemories: (_roomId: UUID): Promise<void> => {
+        removeAllMemories: function (_roomId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        countMemories: (
+        countMemories: function (
             _roomId: UUID,
             _unique?: boolean
-        ): Promise<number> => {
+        ): Promise<number> {
             throw new Error("Function not implemented.");
         },
     },
     loreManager: {
-        addEmbeddingToMemory: (_memory: Memory): Promise<Memory> => {
+        addEmbeddingToMemory: function (_memory: Memory): Promise<Memory> {
             throw new Error("Function not implemented.");
         },
-        getMemories: (_opts: {
+        getMemories: function (_opts: {
             roomId: UUID;
             count?: number;
             unique?: boolean;
             agentId?: UUID;
             start?: number;
             end?: number;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        getCachedEmbeddings: (
+        getCachedEmbeddings: function (
             _content: string
-        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> => {
+        ): Promise<{ embedding: number[]; levenshtein_score: number }[]> {
             throw new Error("Function not implemented.");
         },
-        getMemoryById: (_id: UUID): Promise<Memory | null> => {
+        getMemoryById: function (_id: UUID): Promise<Memory | null> {
             throw new Error("Function not implemented.");
         },
-        getMemoriesByRoomIds: (_params: {
+        getMemoriesByRoomIds: function (_params: {
             roomIds: UUID[];
             agentId?: UUID;
-        }): Promise<Memory[]> => {
+        }): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        searchMemoriesByEmbedding: (
+        searchMemoriesByEmbedding: function (
             _embedding: number[],
             _opts: {
                 match_threshold?: number;
@@ -188,45 +188,47 @@ export const mockRuntime: IAgentRuntime = {
                 unique?: boolean;
                 agentId?: UUID;
             }
-        ): Promise<Memory[]> => {
+        ): Promise<Memory[]> {
             throw new Error("Function not implemented.");
         },
-        createMemory: (
+        createMemory: function (
             _memory: Memory,
             _unique?: boolean
-        ): Promise<void> => {
+        ): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeMemory: (_memoryId: UUID): Promise<void> => {
+        removeMemory: function (_memoryId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        removeAllMemories: (_roomId: UUID): Promise<void> => {
+        removeAllMemories: function (_roomId: UUID): Promise<void> {
             throw new Error("Function not implemented.");
         },
-        countMemories: (
+        countMemories: function (
             _roomId: UUID,
             _unique?: boolean
-        ): Promise<number> => {
+        ): Promise<number> {
             throw new Error("Function not implemented.");
         },
     },
-    ensureRoomExists: (_roomId: UUID): Promise<void> => {
+    ensureRoomExists: function (_roomId: UUID): Promise<void> {
         throw new Error("Function not implemented.");
     },
-    composeState: (
+    composeState: function (
         _message: Memory,
         _additionalKeys?: { [key: string]: unknown }
-    ): Promise<State> => {
+    ): Promise<State> {
         throw new Error("Function not implemented.");
     },
-    updateRecentMessageState: (_state: State): Promise<State> => {
+    updateRecentMessageState: function (_state: State): Promise<State> {
         throw new Error("Function not implemented.");
     },
-    getService: <T extends Service>(
+    getService: function <T extends Service>(
         serviceType: ServiceType
-    ): T | null => (services.get(serviceType) as T) || null,
+    ): T | null {
+        return (services.get(serviceType) as T) || null;
+    },
     plugins: [],
-    initialize: (): Promise<void> => {
+    initialize: function (): Promise<void> {
         throw new Error("Function not implemented.");
     },
 };

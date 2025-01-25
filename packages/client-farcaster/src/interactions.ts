@@ -2,18 +2,18 @@ import {
     composeContext,
     generateMessageResponse,
     generateShouldRespond,
-    type Memory,
+    Memory,
     ModelClass,
     stringToUuid,
     elizaLogger,
-    type HandlerCallback,
-    type Content,
+    HandlerCallback,
+    Content,
     type IAgentRuntime,
 } from "@elizaos/core";
 import type { FarcasterClient } from "./client";
 import { toHex } from "viem";
 import { buildConversationThread, createCastMemory } from "./memory";
-import type { Cast, Profile } from "./types";
+import { Cast, Profile } from "./types";
 import {
     formatCast,
     formatTimeline,
@@ -43,8 +43,9 @@ export class FarcasterInteractionManager {
 
             this.timeout = setTimeout(
                 handleInteractionsLoop,
-                Number(this.client.farcasterConfig?.FARCASTER_POLL_INTERVAL ?? 120) *
-                1000 // Default to 2 minutes
+                Number(
+                    this.runtime.getSetting("FARCASTER_POLL_INTERVAL") || 120
+                ) * 1000 // Default to 2 minutes
             );
         };
 
@@ -56,11 +57,7 @@ export class FarcasterInteractionManager {
     }
 
     private async handleInteractions() {
-        const agentFid = this.client.farcasterConfig?.FARCASTER_FID ?? 0;
-        if (!agentFid) {
-            elizaLogger.info("No FID found, skipping interactions");
-            return;
-        }
+        const agentFid = Number(this.runtime.getSetting("FARCASTER_FID"));
 
         const mentions = await this.client.getMentions({
             fid: agentFid,
@@ -101,7 +98,7 @@ export class FarcasterInteractionManager {
             });
 
             const memory: Memory = {
-                content: { text: mention.text },
+                content: { text: mention.text, hash: mention.hash },
                 agentId: this.runtime.agentId,
                 userId,
                 roomId,
@@ -140,8 +137,6 @@ export class FarcasterInteractionManager {
         }
 
         const currentPost = formatCast(cast);
-
-        const senderId = stringToUuid(cast.authorFid.toString());
 
         const { timeline } = await this.client.getTimeline({
             fid: agent.fid,
@@ -195,7 +190,6 @@ export class FarcasterInteractionManager {
             await this.runtime.messageManager.createMemory(
                 createCastMemory({
                     roomId: memory.roomId,
-                    senderId,
                     runtime: this.runtime,
                     cast,
                 })
@@ -237,7 +231,7 @@ export class FarcasterInteractionManager {
 
         if (!responseContent.text) return;
 
-        if (this.client.farcasterConfig?.FARCASTER_DRY_RUN) {
+        if (this.runtime.getSetting("FARCASTER_DRY_RUN") === "true") {
             elizaLogger.info(
                 `Dry run: would have responded to cast ${cast.hash} with ${responseContent.text}`
             );
@@ -272,7 +266,7 @@ export class FarcasterInteractionManager {
                 }
                 return results.map((result) => result.memory);
             } catch (error) {
-                elizaLogger.error("Error sending response cast:", error);
+                console.error("Error sending response cast:", error);
                 return [];
             }
         };
@@ -282,7 +276,7 @@ export class FarcasterInteractionManager {
         const newState = await this.runtime.updateRecentMessageState(state);
 
         await this.runtime.processActions(
-            { ...memory, content: { ...memory.content, cast } },
+            memory,
             responseMessages,
             newState,
             callback

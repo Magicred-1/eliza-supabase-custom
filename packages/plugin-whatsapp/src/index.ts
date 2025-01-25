@@ -1,6 +1,6 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { WhatsAppClient } from "./client";
-import type { WhatsAppConfig, WhatsAppMessage, WhatsAppWebhookEvent } from "./types";
+import { WhatsAppConfig, WhatsAppMessage, WhatsAppWebhookEvent } from "./types";
 import { MessageHandler, WebhookHandler } from "./handlers";
 
 export class WhatsAppPlugin implements Plugin {

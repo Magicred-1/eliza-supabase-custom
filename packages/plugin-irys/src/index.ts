@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import IrysService from "./services/irysService";
 
 const irysPlugin: Plugin = {

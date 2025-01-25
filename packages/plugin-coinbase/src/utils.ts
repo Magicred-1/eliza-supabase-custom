@@ -1,18 +1,18 @@
 import {
     Coinbase,
-    type Trade,
-    type Transfer,
+    Trade,
+    Transfer,
     Wallet,
-    type WalletData,
-    type Webhook,
+    WalletData,
+    Webhook,
 } from "@coinbase/coinbase-sdk";
-import { elizaLogger, type IAgentRuntime, settings } from "@elizaos/core";
+import { elizaLogger, IAgentRuntime, settings } from "@elizaos/core";
 import fs from "fs";
 import path from "path";
-import type { EthereumTransaction } from "@coinbase/coinbase-sdk/dist/client";
+import { EthereumTransaction } from "@coinbase/coinbase-sdk/dist/client";
 import { fileURLToPath } from "url";
 import { createArrayCsvWriter } from "csv-writer";
-import type { Transaction } from "./types";
+import { Transaction } from "./types";
 
 // Dynamically resolve the file path to the src/plugins directory
 const __filename = fileURLToPath(import.meta.url);
@@ -513,7 +513,7 @@ export async function executeTransfer(
  */
 export function getCharityAddress(
     network: string,
-    isCharitable = false
+    isCharitable: boolean = false
 ): string | null {
     // Check both environment variable and passed parameter
     const isCharityEnabled =

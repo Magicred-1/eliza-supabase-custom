@@ -2,16 +2,16 @@ import {
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    type HandlerCallback,
+    HandlerCallback,
     ModelClass,
-    type IAgentRuntime,
-    type Memory,
-    type State,
+    IAgentRuntime,
+    Memory,
+    State,
 } from "@elizaos/core";
 import { WalletProvider } from "../providers/wallet";
 import { licenseIPTemplate } from "../templates";
-import type { LicenseIPParams } from "../types";
-import type { MintLicenseTokensResponse } from "@story-protocol/core-sdk";
+import { LicenseIPParams } from "../types";
+import { MintLicenseTokensResponse } from "@story-protocol/core-sdk";
 import { hasIpAttachedLicenseTerms } from "../queries";
 
 export { licenseIPTemplate };

@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { remoteAttestationAction } from "./actions/remoteAttestation";
 
 export const teeMarlinPlugin: Plugin = {

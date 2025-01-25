@@ -1,4 +1,4 @@
-import type { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
+import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
 
 const boredomLevels = [
     {
@@ -215,7 +215,7 @@ const cringeWords = [
     "uncharted",
     "multifaceted",
     "comprehensive",
-    "multi-dimensional",
+    "multi-dimentional",
     "explore",
     "elevate",
     "leverage",

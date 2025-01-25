@@ -3,16 +3,16 @@ import { composeContext, elizaLogger } from "@elizaos/core";
 import { generateMessageResponse, generateText } from "@elizaos/core";
 import { messageCompletionFooter } from "@elizaos/core";
 import {
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type IImageDescriptionService,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    IImageDescriptionService,
     ModelClass,
     ServiceType,
-    type State,
+    State,
 } from "@elizaos/core";
 import { stringToUuid } from "@elizaos/core";
-import type { ClientBase } from "./base";
+import { ClientBase } from "./base";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 
 const twitterSearchTemplate =
@@ -284,7 +284,7 @@ export class TwitterSearchClient {
                         response,
                         message.roomId,
                         this.twitterUsername,
-                        selectedTweet.id
+                        tweetId
                     );
                     return memories;
                 };

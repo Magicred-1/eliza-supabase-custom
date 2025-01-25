@@ -1,4 +1,4 @@
-import type { TransferContent } from "../actions/";
+import { TransferContent } from "../actions/";
 import { isAddress } from "viem";
 
 export class ValidateContext {

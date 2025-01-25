@@ -33,7 +33,7 @@ import {
     getWalletBalance,
     getWalletKeypair,
 } from "./wallet";
-import type { ProcessedTokenData } from "./types";
+import { ProcessedTokenData } from "./types";
 import { analyzeTradeAction } from "./actions/analyzeTrade";
 
 // Update Balance interface to include formatted
@@ -482,7 +482,7 @@ async function createRabbiTraderPlugin(
     }
 
     elizaLogger.log("Initializing Solana connection...");
-    const walletProvider: ExtendedWalletProvider = {
+    let walletProvider: ExtendedWalletProvider = {
         connection,
         getChain: () => ({ type: "solana" }),
         getAddress: () => keypair.publicKey.toBase58(),

@@ -1,17 +1,17 @@
 import {
     composeContext,
     generateText,
-    type IAgentRuntime,
+    IAgentRuntime,
     ModelClass,
     stringToUuid,
     elizaLogger,
 } from "@elizaos/core";
-import type { LensClient } from "./client";
+import { LensClient } from "./client";
 import { formatTimeline, postTemplate } from "./prompts";
 import { publicationUuid } from "./utils";
 import { createPublicationMemory } from "./memory";
 import { sendPublication } from "./actions";
-import type StorjProvider from "./providers/StorjProvider";
+import StorjProvider from "./providers/StorjProvider";
 
 export class LensPostManager {
     private timeout: NodeJS.Timeout | undefined;

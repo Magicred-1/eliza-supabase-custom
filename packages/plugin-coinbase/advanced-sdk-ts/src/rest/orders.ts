@@ -1,6 +1,6 @@
 import { API_PREFIX } from '../constants';
-import type { RESTBase } from './rest-base';
-import type {
+import { RESTBase } from './rest-base';
+import {
     CancelOrdersRequest,
     CancelOrdersResponse,
     ClosePositionRequest,

@@ -1,4 +1,4 @@
-import type { OrganizedDocs } from "../AIService/types";
+import { OrganizedDocs } from "../AIService/types";
 
 export const PROMPT_TEMPLATES = {
     overview: (packageJson: any, docs: OrganizedDocs) => `

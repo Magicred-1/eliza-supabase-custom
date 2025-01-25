@@ -1,4 +1,4 @@
-import type { SlackClientContext, SlackMessage } from "../types/slack-types";
+import { SlackClientContext, SlackMessage } from "../types/slack-types";
 
 // Cache to store recently sent messages
 const recentMessages = new Map<string, { text: string; timestamp: number }>();

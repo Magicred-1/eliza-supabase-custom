@@ -1,13 +1,13 @@
 import {
-    type Action,
+    Action,
     composeContext,
     elizaLogger,
     generateObject,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 import { createNFT } from "../handlers/createNFT.ts";
 import { verifyNFT } from "../handlers/verifyNFT.ts";
@@ -15,7 +15,7 @@ import { sleep } from "../index.ts";
 import WalletSolana from "../provider/wallet/walletSolana.ts";
 import { PublicKey } from "@solana/web3.js";
 import { mintNFTTemplate } from "../templates.ts";
-import { type MintNFTContent, MintNFTSchema } from "../types.ts";
+import { MintNFTContent, MintNFTSchema } from "../types.ts";
 import * as viemChains from "viem/chains";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";

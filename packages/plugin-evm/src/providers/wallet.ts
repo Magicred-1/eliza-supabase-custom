@@ -1,11 +1,8 @@
 import {
     createPublicClient,
-    createTestClient,
     createWalletClient,
     formatUnits,
     http,
-    publicActions,
-    walletActions,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import {
@@ -24,7 +21,6 @@ import type {
     HttpTransport,
     Account,
     PrivateKeyAccount,
-    TestClient,
 } from "viem";
 import * as viemChains from "viem/chains";
 import { DeriveKeyProvider, TEEMode } from "@elizaos/plugin-tee";
@@ -35,7 +31,7 @@ import type { SupportedChain } from "../types";
 
 export class WalletProvider {
     private cache: NodeCache;
-    private cacheKey = "evm/wallet";
+    private cacheKey: string = "evm/wallet";
     private currentChain: SupportedChain = "mainnet";
     private CACHE_EXPIRY_SEC = 5;
     chains: Record<string, Chain> = { ...viemChains };
@@ -86,16 +82,6 @@ export class WalletProvider {
         });
 
         return walletClient;
-    }
-
-    getTestClient(): TestClient {
-        return createTestClient({
-            chain: viemChains.hardhat,
-            mode: "hardhat",
-            transport: http(),
-        })
-            .extend(publicActions)
-            .extend(walletActions);
     }
 
     getChainConfigs(chainName: SupportedChain): Chain {
@@ -306,8 +292,8 @@ export const initWalletProvider = async (runtime: IAgentRuntime) => {
 
         const deriveKeyProvider = new DeriveKeyProvider(teeMode);
         const deriveKeyResult = await deriveKeyProvider.deriveEcdsaKeypair(
+            "/",
             walletSecretSalt,
-            "evm",
             runtime.agentId
         );
         return new WalletProvider(

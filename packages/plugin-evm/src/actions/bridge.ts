@@ -7,11 +7,11 @@ import {
 import {
     createConfig,
     executeRoute,
-    type ExtendedChain,
+    ExtendedChain,
     getRoutes,
 } from "@lifi/sdk";
 
-import { initWalletProvider, type WalletProvider } from "../providers/wallet";
+import { initWalletProvider, WalletProvider } from "../providers/wallet";
 import { bridgeTemplate } from "../templates";
 import type { BridgeParams, Transaction } from "../types";
 import { parseEther } from "viem";

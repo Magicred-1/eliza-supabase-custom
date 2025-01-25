@@ -1,8 +1,8 @@
 import {
-    type IAgentRuntime,
-    type Memory,
-    type Provider,
-    type State,
+    IAgentRuntime,
+    Memory,
+    Provider,
+    State,
     elizaLogger,
 } from "@elizaos/core";
 import { Connection, PublicKey } from "@solana/web3.js";

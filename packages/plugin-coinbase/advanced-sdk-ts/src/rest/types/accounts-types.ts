@@ -1,4 +1,4 @@
-import type { Account } from './common-types';
+import { Account } from './common-types';
 
 // Get Account
 export type GetAccountRequest = {

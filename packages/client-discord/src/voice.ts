@@ -1,12 +1,12 @@
 import {
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
     ServiceType,
-    type State,
-    type UUID,
+    State,
+    UUID,
     composeContext,
     composeRandomUser,
     elizaLogger,
@@ -14,15 +14,15 @@ import {
     generateMessageResponse,
     stringToUuid,
     generateShouldRespond,
-    type ITranscriptionService,
-    type ISpeechService,
+    ITranscriptionService,
+    ISpeechService,
 } from "@elizaos/core";
 import {
-    type AudioPlayer,
-    type AudioReceiveStream,
+    AudioPlayer,
+    AudioReceiveStream,
     NoSubscriberBehavior,
     StreamType,
-    type VoiceConnection,
+    VoiceConnection,
     VoiceConnectionStatus,
     createAudioPlayer,
     createAudioResource,
@@ -31,18 +31,18 @@ import {
     entersState,
 } from "@discordjs/voice";
 import {
-    type BaseGuildVoiceChannel,
+    BaseGuildVoiceChannel,
     ChannelType,
-    type Client,
-    type Guild,
-    type GuildMember,
-    type VoiceChannel,
-    type VoiceState,
+    Client,
+    Guild,
+    GuildMember,
+    VoiceChannel,
+    VoiceState,
 } from "discord.js";
 import EventEmitter from "events";
 import prism from "prism-media";
-import { type Readable, pipeline } from "stream";
-import type { DiscordClient } from "./index.ts";
+import { Readable, pipeline } from "stream";
+import { DiscordClient } from "./index.ts";
 import {
     discordShouldRespondTemplate,
     discordVoiceHandlerTemplate,
@@ -57,8 +57,8 @@ export class AudioMonitor {
     private readable: Readable;
     private buffers: Buffer[] = [];
     private maxSize: number;
-    private lastFlagged = -1;
-    private ended = false;
+    private lastFlagged: number = -1;
+    private ended: boolean = false;
 
     constructor(
         readable: Readable,
@@ -139,7 +139,7 @@ export class AudioMonitor {
 }
 
 export class VoiceManager extends EventEmitter {
-    private processingVoice = false;
+    private processingVoice: boolean = false;
     private transcriptionTimeout: NodeJS.Timeout | null = null;
     private userStates: Map<
         string,

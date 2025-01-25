@@ -1,5 +1,5 @@
-import type { AIService } from "./AIService/AIService.js";
-import type { ASTQueueItem } from "./types/index.js";
+import { AIService } from "./AIService/AIService.js";
+import { ASTQueueItem } from "./types/index.js";
 
 /**
  * A class that generates JSDoc comments for code snippets and classes.

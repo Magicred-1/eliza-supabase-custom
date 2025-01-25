@@ -16,7 +16,7 @@ interface UploadResponse {
 
 export async function uploadFileToWeb3Storage(
     base64Data: string,
-    fileName = "image.png"
+    fileName: string = "image.png"
 ): Promise<UploadResponse> {
     try {
         // Remove base64 URL prefix (if exists)

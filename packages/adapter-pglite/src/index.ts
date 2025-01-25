@@ -1,29 +1,29 @@
 import { v4 } from "uuid";
 
 import {
-    type Account,
-    type Actor,
-    type GoalStatus,
+    Account,
+    Actor,
+    GoalStatus,
     type Goal,
     type Memory,
     type Relationship,
     type UUID,
     type IDatabaseCacheAdapter,
-    type Participant,
+    Participant,
     elizaLogger,
     getEmbeddingConfig,
     DatabaseAdapter,
     EmbeddingProvider,
-    type RAGKnowledgeItem,
+    RAGKnowledgeItem,
 } from "@elizaos/core";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import {
     PGlite,
-    type PGliteOptions,
-    type Results,
-    type Transaction,
+    PGliteOptions,
+    Results,
+    Transaction,
 } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 import { fuzzystrmatch } from "@electric-sql/pglite/contrib/fuzzystrmatch";
@@ -152,7 +152,6 @@ export class PGLiteDatabaseAdapter
         roomIds: UUID[];
         agentId?: UUID;
         tableName: string;
-        limit?: number;
     }): Promise<Memory[]> {
         return this.withDatabase(async () => {
             if (params.roomIds.length === 0) return [];
@@ -166,13 +165,6 @@ export class PGLiteDatabaseAdapter
             if (params.agentId) {
                 query += ` AND "agentId" = $${params.roomIds.length + 2}`;
                 queryParams = [...queryParams, params.agentId];
-            }
-
-            // Add ordering and limit
-            query += ` ORDER BY "createdAt" DESC`;
-            if (params.limit) {
-                query += ` LIMIT $${queryParams.length + 1}`;
-                queryParams.push(params.limit.toString());
             }
 
             const { rows } = await this.query<Memory>(query, queryParams);
@@ -331,33 +323,6 @@ export class PGLiteDatabaseAdapter
                         : rows[0].content,
             };
         }, "getMemoryById");
-    }
-
-    async getMemoriesByIds(
-        memoryIds: UUID[],
-        tableName?: string
-    ): Promise<Memory[]> {
-        return this.withDatabase(async () => {
-            if (memoryIds.length === 0) return [];
-            const placeholders = memoryIds.map((_, i) => `$${i + 1}`).join(",");
-            let sql = `SELECT * FROM memories WHERE id IN (${placeholders})`;
-            const queryParams: any[] = [...memoryIds];
-
-            if (tableName) {
-                sql += ` AND type = $${memoryIds.length + 1}`;
-                queryParams.push(tableName);
-            }
-
-            const { rows } = await this.query<Memory>(sql, queryParams);
-
-            return rows.map((row) => ({
-                ...row,
-                content:
-                    typeof row.content === "string"
-                        ? JSON.parse(row.content)
-                        : row.content,
-            }));
-        }, "getMemoriesByIds");
     }
 
     async createMemory(memory: Memory, tableName: string): Promise<void> {

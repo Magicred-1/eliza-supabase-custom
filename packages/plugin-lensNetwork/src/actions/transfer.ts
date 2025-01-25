@@ -1,11 +1,11 @@
 import {
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
     type Action,
     elizaLogger,
     composeContext,
@@ -16,7 +16,7 @@ import { getDefaultProvider, Network, Wallet } from "@lens-network/sdk/ethers";
 import { ethers, formatEther } from "ethers";
 
 import {
-    type Address,
+    Address,
     createWalletClient,
     erc20Abi,
     http,

@@ -1,4 +1,4 @@
-import type { IAgentRuntime } from "@elizaos/core";
+import { IAgentRuntime } from "@elizaos/core";
 import { PublicKey } from "@solana/web3.js";
 import WalletSolana from "../provider/wallet/walletSolana.ts";
 

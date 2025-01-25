@@ -2,12 +2,12 @@ import {
     composeContext,
     generateMessageResponse,
     generateShouldRespond,
-    type Memory,
+    Memory,
     ModelClass,
     stringToUuid,
     elizaLogger,
-    type HandlerCallback,
-    type Content,
+    HandlerCallback,
+    Content,
     type IAgentRuntime,
 } from "@elizaos/core";
 import type { LensClient } from "./client";
@@ -21,9 +21,9 @@ import {
 } from "./prompts";
 import { publicationUuid } from "./utils";
 import { sendPublication } from "./actions";
-import type { AnyPublicationFragment } from "@lens-protocol/client";
-import type { Profile } from "./types";
-import type StorjProvider from "./providers/StorjProvider";
+import { AnyPublicationFragment } from "@lens-protocol/client";
+import { Profile } from "./types";
+import StorjProvider from "./providers/StorjProvider";
 
 export class LensInteractionManager {
     private timeout: NodeJS.Timeout | undefined;

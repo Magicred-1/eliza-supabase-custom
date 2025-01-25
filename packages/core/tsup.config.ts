@@ -18,6 +18,7 @@ export default defineConfig({
         "http",
         "https",
         // Add other modules you want to externalize
+        "@tavily/core",
         "onnxruntime-node",
         "sharp",
     ],

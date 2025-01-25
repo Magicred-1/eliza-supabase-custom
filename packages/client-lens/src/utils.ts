@@ -1,5 +1,5 @@
 import { stringToUuid } from "@elizaos/core";
-import type { BroadcastResult } from "./types";
+import { BroadcastResult } from "./types";
 
 export function publicationId({
     pubId,

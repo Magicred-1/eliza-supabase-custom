@@ -1,12 +1,12 @@
 import type { Action } from "@elizaos/core";
 import {
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
     elizaLogger,
     composeContext,
     generateObject,
@@ -14,7 +14,7 @@ import {
 import { validateZKsyncConfig } from "../enviroment";
 
 import {
-    type Address,
+    Address,
     erc20Abi,
     http,
     isAddress,

@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ObsidianProvider } from '../providers/obsidianClient';
 import {
     elizaLogger,
-    type AgentRuntime
+    AgentRuntime
 } from "@elizaos/core";
-import type { NoteContent, ResultNoteApi, ServerInfo } from '../types';
+import { NoteContent, ResultNoteApi, ServerInfo } from '../types';
 
 // Mock fetch globally
 const fetchMock = vi.fn();

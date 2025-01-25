@@ -1,20 +1,20 @@
-import type { DirectoryTraversal } from "./DirectoryTraversal.js";
-import type { TypeScriptParser } from "./TypeScriptParser.js";
-import type { JsDocAnalyzer } from "./JsDocAnalyzer.js";
-import type { JsDocGenerator } from "./JsDocGenerator.js";
+import { DirectoryTraversal } from "./DirectoryTraversal.js";
+import { TypeScriptParser } from "./TypeScriptParser.js";
+import { JsDocAnalyzer } from "./JsDocAnalyzer.js";
+import { JsDocGenerator } from "./JsDocGenerator.js";
 import type { TSESTree } from "@typescript-eslint/types";
-import type {
+import {
     ASTQueueItem,
     EnvUsage,
     FullModeFileChange,
     PrModeFileChange,
     TodoItem,
 } from "./types/index.js";
-import type { GitManager } from "./GitManager.js";
+import { GitManager } from "./GitManager.js";
 import fs from "fs";
-import type { Configuration } from "./Configuration.js";
+import { Configuration } from "./Configuration.js";
 import path from "path";
-import type { AIService } from "./AIService/AIService.js";
+import { AIService } from "./AIService/AIService.js";
 import { PluginDocumentationGenerator } from "./PluginDocumentationGenerator.js";
 import { JSDocValidator } from "./JSDocValidator.js";
 
@@ -25,9 +25,9 @@ import { JSDocValidator } from "./JSDocValidator.js";
 export class DocumentationGenerator {
     public missingJsDocQueue: ASTQueueItem[] = [];
     public existingJsDocQueue: ASTQueueItem[] = [];
-    private hasChanges = false;
+    private hasChanges: boolean = false;
     private fileContents: Map<string, string> = new Map();
-    public branchName = "";
+    public branchName: string = "";
     private fileOffsets: Map<string, number> = new Map();
     private typeScriptFiles: string[] = [];
     private jsDocValidator: JSDocValidator;

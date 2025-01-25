@@ -1,4 +1,4 @@
-import type { IAgentRuntime } from "@elizaos/core";
+import { IAgentRuntime } from "@elizaos/core";
 import { z } from "zod";
 
 const STARKNET_PUBLIC_RPC = "https://starknet-mainnet.public.blastapi.io";

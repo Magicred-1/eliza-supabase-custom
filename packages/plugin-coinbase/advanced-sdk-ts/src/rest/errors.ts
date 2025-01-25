@@ -1,4 +1,4 @@
-import type { Response } from 'node-fetch';
+import { Response } from 'node-fetch';
 
 class CoinbaseError extends Error {
     statusCode: number;

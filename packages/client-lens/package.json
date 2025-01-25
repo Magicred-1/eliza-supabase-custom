@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/client-lens",
-    "version": "0.1.9-alpha.1",
+    "version": "0.1.8+build.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -18,13 +18,6 @@
     "files": [
         "dist"
     ],
-    "scripts": {
-        "build": "tsup --format esm --dts",
-        "dev": "tsup --format esm --dts --watch",
-        "test": "vitest run",
-        "test:watch": "vitest watch",
-        "test:coverage": "vitest run --coverage"
-    },
     "dependencies": {
         "@elizaos/core": "workspace:*",
         "@lens-protocol/client": "2.2.0",
@@ -32,11 +25,13 @@
         "axios": "^1.7.9"
     },
     "devDependencies": {
-        "tsup": "^8.3.5",
-        "vitest": "^1.2.1",
-        "@vitest/coverage-v8": "^1.2.1"
+        "tsup": "^8.3.5"
     },
     "peerDependencies": {
         "@elizaos/core": "workspace:*"
+    },
+    "scripts": {
+        "build": "tsup --format esm --dts",
+        "dev": "tsup --format esm --dts --watch"
     }
 }

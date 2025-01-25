@@ -1,8 +1,8 @@
-import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, elizaLogger } from "@elizaos/core";
 import { z } from "zod";
 
 // Add ENV variable at the top
-let ENV = "mainnet";
+let ENV: string = "mainnet";
 
 // Log environment information
 elizaLogger.info("Environment sources", {

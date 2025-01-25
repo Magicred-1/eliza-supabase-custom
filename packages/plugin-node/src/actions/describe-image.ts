@@ -1,16 +1,16 @@
 import {
-    type Action,
-    type IAgentRuntime,
-    type Memory,
-    type State,
-    type HandlerCallback,
+    Action,
+    IAgentRuntime,
+    Memory,
+    State,
+    HandlerCallback,
     composeContext,
     generateObject,
-    type ActionExample,
+    ActionExample,
     ModelClass,
     elizaLogger,
     ServiceType,
-    type IImageDescriptionService,
+    IImageDescriptionService,
 } from "@elizaos/core";
 import { getFileLocationTemplate } from "../templates";
 import { FileLocationResultSchema, isFileLocationResult } from "../types";
@@ -43,18 +43,12 @@ export const describeImage: Action = {
             stop: ["\n"],
         });
 
-        if (
-            !isFileLocationResult(
-                fileLocationResultObject?.object ?? fileLocationResultObject
-            )
-        ) {
+        if (!isFileLocationResult(fileLocationResultObject?.object)) {
             elizaLogger.error("Failed to generate file location");
             return false;
         }
 
-        let fileLocation = (fileLocationResultObject?.object as any)
-            ?.fileLocation;
-        fileLocation ??= fileLocationResultObject;
+        const { fileLocation } = fileLocationResultObject.object;
 
         const { description } = await runtime
             .getService<IImageDescriptionService>(ServiceType.IMAGE_DESCRIPTION)

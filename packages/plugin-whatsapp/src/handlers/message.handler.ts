@@ -1,5 +1,5 @@
-import type { WhatsAppClient } from "../client";
-import type { WhatsAppMessage } from "../types";
+import { WhatsAppClient } from "../client";
+import { WhatsAppMessage } from "../types";
 
 export class MessageHandler {
     constructor(private client: WhatsAppClient) {}

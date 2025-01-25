@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import sendGif from "./actions/sendGif";
 
 export const giphyPlugin: Plugin = {

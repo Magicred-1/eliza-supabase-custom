@@ -4,14 +4,8 @@
 LERNA_FILE="../lerna.json"
 
 # Check if lerna.json exists
-if [ ! -f "${LERNA_FILE}" ]; then
-  echo "Error: ${LERNA_FILE} does not exist."
-  exit 1
-fi
-
-# Check if we have write permissions to the destination directory
-if [ ! -w "src/lib" ]; then
-  echo "Error: No write permission to src/lib directory."
+if [ ! -f "$LERNA_FILE" ]; then
+  echo "Error: $LERNA_FILE does not exist."
   exit 1
 fi
 

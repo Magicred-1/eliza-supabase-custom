@@ -1,4 +1,4 @@
-import type PinataClient from "@pinata/sdk";
+import PinataClient from "@pinata/sdk";
 
 export async function uploadJSONToIPFS(
     pinata: PinataClient,

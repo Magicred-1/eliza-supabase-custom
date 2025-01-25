@@ -2,8 +2,8 @@
 // Look for the TODOs to see what needs to be updated
 
 import { settings } from "@elizaos/core";
-import type { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
-import type {
+import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
+import {
     DexScreenerData,
     DexScreenerPair,
     HolderData,
@@ -12,16 +12,16 @@ import type {
     CalculatedBuyAmounts,
     Prices,
 } from "../types/trustDB.ts";
-import { WalletProvider, type TokenBalances } from "./portfolioProvider.ts";
+import { WalletProvider, TokenBalances } from "./portfolioProvider.ts";
 import { num } from "starknet";
 import {
     analyzeHighSupplyHolders,
     evaluateTokenTrading,
-    type TokenMetrics,
+    TokenMetrics,
 } from "./utils.ts";
 import { PROVIDER_CONFIG } from "../index.ts";
 import { Cache } from "../utils/cache.ts";
-import type { TokenInfo } from "../types/token.ts";
+import { TokenInfo } from "../types/token.ts";
 
 export const PORTFOLIO_TOKENS = {
     // Coingecko IDs src:
@@ -580,7 +580,7 @@ export class TokenProvider {
 
                 data.result.token_accounts.forEach((account: any) => {
                     const owner = account.owner;
-                    const balance = Number.parseFloat(account.amount);
+                    const balance = parseFloat(account.amount);
 
                     if (allHoldersMap.has(owner)) {
                         allHoldersMap.set(

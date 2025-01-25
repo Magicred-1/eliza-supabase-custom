@@ -1,11 +1,11 @@
 import {
-    type Action,
-    type ActionExample,
+    Action,
+    ActionExample,
     composeContext,
-    type Content,
+    Content,
     generateText,
-    type IAgentRuntime,
-    type Memory,
+    IAgentRuntime,
+    Memory,
     ModelClass,
     settings,
 } from "@elizaos/core";

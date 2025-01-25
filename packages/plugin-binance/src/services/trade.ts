@@ -1,15 +1,15 @@
 import { ORDER_TYPES, TIME_IN_FORCE } from "../constants/api";
 import { ERROR_MESSAGES } from "../constants/errors";
-import type {
+import {
     BinanceExchangeInfo,
     BinanceSymbolFilter,
     BinanceSymbolInfo,
 } from "../types/api/price";
-import type {
+import {
     BinanceNewOrderParams,
     BinanceOrderResponse,
 } from "../types/api/trade";
-import type { SpotTradeRequest, TradeResponse } from "../types/internal/config";
+import { SpotTradeRequest, TradeResponse } from "../types/internal/config";
 import { InvalidSymbolError, MinNotionalError } from "../types/internal/error";
 import { BaseService } from "./base";
 
@@ -107,7 +107,7 @@ export class TradeService extends BaseService {
 
         const notionalValue = price ? quantity * price : quantity; // For market orders, quantity is in quote currency
 
-        if (Number.parseFloat(minNotional) > notionalValue) {
+        if (parseFloat(minNotional) > notionalValue) {
             throw new MinNotionalError(minNotional);
         }
     }

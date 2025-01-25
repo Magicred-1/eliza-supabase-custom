@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-near",
-    "version": "0.1.9-alpha.1",
+    "version": "0.1.8+build.1",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -29,7 +29,8 @@
     "scripts": {
         "build": "tsup --format esm,cjs --dts",
         "test": "vitest run",
-        "test:watch": "vitest"
+        "test:watch": "vitest",
+        "lint": "eslint . --fix"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0",

@@ -1,11 +1,11 @@
-import type {
+import {
     Account,
     Actor,
     GoalStatus,
-    Goal,
-    Memory,
-    Relationship,
-    UUID,
+    type Goal,
+    type Memory,
+    type Relationship,
+    type UUID,
     RAGKnowledgeItem,
     Participant,
     IDatabaseAdapter,
@@ -99,17 +99,6 @@ export abstract class DatabaseAdapter<DB = any> implements IDatabaseAdapter {
     }): Promise<Memory[]>;
 
     abstract getMemoryById(id: UUID): Promise<Memory | null>;
-
-    /**
-     * Retrieves multiple memories by their IDs
-     * @param memoryIds Array of UUIDs of the memories to retrieve
-     * @param tableName Optional table name to filter memories by type
-     * @returns Promise resolving to array of Memory objects
-     */
-    abstract getMemoriesByIds(
-        memoryIds: UUID[],
-        tableName?: string
-    ): Promise<Memory[]>;
 
     /**
      * Retrieves cached embeddings based on the specified query parameters.
@@ -393,12 +382,12 @@ export abstract class DatabaseAdapter<DB = any> implements IDatabaseAdapter {
         userId: UUID;
     }): Promise<Relationship[]>;
 
-    /**
+     /**
      * Retrieves knowledge items based on specified parameters.
      * @param params Object containing search parameters
      * @returns Promise resolving to array of knowledge items
      */
-    abstract getKnowledge(params: {
+     abstract getKnowledge(params: {
         id?: UUID;
         agentId: UUID;
         limit?: number;

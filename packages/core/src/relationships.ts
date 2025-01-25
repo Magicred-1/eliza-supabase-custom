@@ -1,4 +1,4 @@
-import type { IAgentRuntime, Relationship, UUID } from "./types.ts";
+import { IAgentRuntime, type Relationship, type UUID } from "./types.ts";
 
 export async function createRelationship({
     runtime,

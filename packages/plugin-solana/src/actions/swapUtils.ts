@@ -1,12 +1,12 @@
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import {
-    type BlockhashWithExpiryBlockHeight,
+    BlockhashWithExpiryBlockHeight,
     Connection,
-    type Keypair,
+    Keypair,
     PublicKey,
-    type RpcResponseAndContext,
-    type SimulatedTransactionResponse,
-    type TokenAmount,
+    RpcResponseAndContext,
+    SimulatedTransactionResponse,
+    TokenAmount,
     VersionedTransaction,
 } from "@solana/web3.js";
 import { settings, elizaLogger } from "@elizaos/core";

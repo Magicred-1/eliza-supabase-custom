@@ -1,4 +1,4 @@
-import type { ASTQueueItem } from "../../types";
+import { ASTQueueItem } from "../../types";
 
 export interface FileDocsGroup {
     filePath: string;

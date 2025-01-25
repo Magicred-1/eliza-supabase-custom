@@ -1,19 +1,19 @@
 import {
-    type Action,
-    type ActionExample,
+    Action,
+    ActionExample,
     composeContext,
     elizaLogger,
     generateObjectDeprecated,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
 } from "@elizaos/core";
 import {
     executeSwap as executeAvnuSwap,
     fetchQuotes,
-    type QuoteRequest,
+    QuoteRequest,
 } from "@avnu/avnu-sdk";
 
 import { getStarknetAccount } from "../utils/index.ts";

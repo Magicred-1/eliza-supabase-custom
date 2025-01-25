@@ -4,7 +4,7 @@ import {
     formatActionNames,
     formatActions,
 } from "../src/actions";
-import type { Action } from "../src/types";
+import { Action } from "../src/types";
 
 describe("Actions", () => {
     const mockActions: Action[] = [

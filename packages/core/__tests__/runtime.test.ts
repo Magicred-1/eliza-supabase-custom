@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AgentRuntime } from "../src/runtime";
 import {
-    type IDatabaseAdapter,
+    IDatabaseAdapter,
     ModelProviderName,
-    type Action,
-    type Memory,
-    type UUID,
+    Action,
+    Memory,
+    UUID,
 } from "../src/types";
 import { defaultCharacter } from "../src/defaultCharacter";
 

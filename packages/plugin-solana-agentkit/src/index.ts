@@ -1,7 +1,7 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import createToken from "./actions/createToken.ts";
 
-export const solanaAgentkitPlugin: Plugin = {
+export const solanaAgentkitPlguin: Plugin = {
     name: "solana",
     description: "Solana Plugin with solana agent kit for Eliza",
     actions: [createToken],
@@ -9,4 +9,4 @@ export const solanaAgentkitPlugin: Plugin = {
     providers: [],
 };
 
-export default solanaAgentkitPlugin;
+export default solanaAgentkitPlguin;

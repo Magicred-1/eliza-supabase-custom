@@ -1,18 +1,18 @@
 import {
-    type ActionExample,
-    type Content,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    Content,
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type State,
+    State,
     elizaLogger,
     type Action,
     composeContext,
     generateObject,
 } from "@elizaos/core";
 import { connect, keyStores, utils } from "near-api-js";
-import type { KeyPairString } from "near-api-js/lib/utils";
+import { KeyPairString } from "near-api-js/lib/utils";
 import { utils as nearUtils } from "near-api-js";
 // import BigNumber from "bignumber.js";
 

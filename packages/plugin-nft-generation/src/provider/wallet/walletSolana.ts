@@ -1,10 +1,10 @@
 import NodeCache from "node-cache";
 import {
-    type Cluster,
+    Cluster,
     clusterApiUrl,
     Connection,
     LAMPORTS_PER_SOL,
-    type PublicKey,
+    PublicKey,
 } from "@solana/web3.js";
 import {
     createNft,
@@ -22,7 +22,7 @@ import {
     publicKey,
     // sol,
     TransactionBuilder,
-    type Umi,
+    Umi,
 } from "@metaplex-foundation/umi";
 import { getExplorerLink } from "@solana-developers/helpers";
 // import { transferSol } from "@metaplex-foundation/mpl-toolbox";

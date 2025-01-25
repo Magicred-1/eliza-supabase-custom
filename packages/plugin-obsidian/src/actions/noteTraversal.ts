@@ -1,15 +1,15 @@
 import {
-    type Action,
-    type HandlerCallback,
-    type AgentRuntime as IAgentRuntime,
-    type Memory,
-    type State,
+    Action,
+    HandlerCallback,
+    AgentRuntime as IAgentRuntime,
+    Memory,
+    State,
     elizaLogger,
     composeContext,
     generateObject,
     ModelClass
 } from "@elizaos/core";
-import { type NoteContent, type NoteHierarchy, isValidNoteHierarchy, noteHierarchySchema } from "../types";
+import { NoteContent, NoteHierarchy, isValidNoteHierarchy, noteHierarchySchema } from "../types";
 import { getObsidian, extractLinks, storeHierarchyInMemory, retrieveHierarchyFromMemory } from "../helper";
 import { traversalTemplate } from "../templates/traversal";
 

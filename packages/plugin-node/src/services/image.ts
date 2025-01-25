@@ -1,8 +1,8 @@
 import {
     elizaLogger,
     getEndpoint,
-    type IAgentRuntime,
-    type IImageDescriptionService,
+    IAgentRuntime,
+    IImageDescriptionService,
     ModelProviderName,
     models,
     Service,
@@ -13,14 +13,14 @@ import {
     AutoTokenizer,
     env,
     Florence2ForConditionalGeneration,
-    type Florence2Processor,
-    type PreTrainedModel,
-    type PreTrainedTokenizer,
+    Florence2Processor,
+    PreTrainedModel,
+    PreTrainedTokenizer,
     RawImage,
     type Tensor,
 } from "@huggingface/transformers";
-import sharp, { AvailableFormatInfo, FormatEnum } from "sharp";
 import fs from "fs";
+import gifFrames from "gif-frames";
 import os from "os";
 import path from "path";
 
@@ -69,7 +69,7 @@ class LocalImageProvider implements ImageProvider {
     private model: PreTrainedModel | null = null;
     private processor: Florence2Processor | null = null;
     private tokenizer: PreTrainedTokenizer | null = null;
-    private modelId = "onnx-community/Florence-2-base-ft";
+    private modelId: string = "onnx-community/Florence-2-base-ft";
 
     async initialize(): Promise<void> {
         env.allowLocalModels = false;
@@ -111,14 +111,15 @@ class LocalImageProvider implements ImageProvider {
     }
 
     async describeImage(
-        imageData: Buffer,
-        mimeType: string
+        imageData: Buffer
     ): Promise<{ title: string; description: string }> {
         if (!this.model || !this.processor || !this.tokenizer) {
             throw new Error("Model components not initialized");
         }
-        const blob = new Blob([imageData], { type: mimeType });
-        const image = await RawImage.fromBlob(blob);
+
+        const base64Data = imageData.toString("base64");
+        const dataUrl = `data:image/jpeg;base64,${base64Data}`;
+        const image = await RawImage.fromURL(dataUrl);
         const visionInputs = await this.processor(image);
         const prompts = this.processor.construct_prompts("<DETAILED_CAPTION>");
         const textInputs = this.tokenizer(prompts);
@@ -142,56 +143,6 @@ class LocalImageProvider implements ImageProvider {
 
         const detailedCaption = result["<DETAILED_CAPTION>"] as string;
         return { title: detailedCaption, description: detailedCaption };
-    }
-}
-
-class AnthropicImageProvider implements ImageProvider {
-    constructor(private runtime: IAgentRuntime) {
-    }
-
-    async initialize(): Promise<void> {
-    }
-
-    async describeImage(
-        imageData: Buffer,
-        mimeType: string,
-    ): Promise<{ title: string; description: string }> {
-        const endpoint = getEndpoint(ModelProviderName.ANTHROPIC);
-        const apiKey = this.runtime.getSetting("ANTHROPIC_API_KEY");
-
-        const content = [
-            {type: "text", text: IMAGE_DESCRIPTION_PROMPT},
-            {
-                type: "image",
-                source: {
-                    type: "base64",
-                    media_type: mimeType,
-                    data: imageData.toString("base64"),
-                },
-            },
-        ];
-
-        const response = await fetch(`${endpoint}/messages`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": apiKey,
-                "anthropic-version": "2023-06-01",
-            },
-            body: JSON.stringify(
-                {
-                    model: "claude-3-haiku-20240307",
-                    max_tokens: 1024,
-                    messages: [{role: "user", content}],
-                }),
-        });
-
-        if (!response.ok) {
-            await handleApiError(response, "Anthropic");
-        }
-
-        const data = await response.json();
-        return parseImageResponse(data.content[0].text);
     }
 }
 
@@ -231,49 +182,6 @@ class OpenAIImageProvider implements ImageProvider {
 
         if (!response.ok) {
             await handleApiError(response, "OpenAI");
-        }
-
-        const data = await response.json();
-        return parseImageResponse(data.choices[0].message.content);
-    }
-}
-
-class GroqImageProvider implements ImageProvider {
-    constructor(private runtime: IAgentRuntime) {}
-
-    async initialize(): Promise<void> {}
-
-    async describeImage(
-        imageData: Buffer,
-        mimeType: string
-    ): Promise<{ title: string; description: string }> {
-        const imageUrl = convertToBase64DataUrl(imageData, mimeType);
-
-        const content = [
-            { type: "text", text: IMAGE_DESCRIPTION_PROMPT },
-            { type: "image_url", image_url: { url: imageUrl } },
-        ];
-
-        const endpoint =
-            this.runtime.imageVisionModelProvider === ModelProviderName.GROQ
-                ? getEndpoint(this.runtime.imageVisionModelProvider)
-                : "https://api.groq.com/openai/v1/";
-
-        const response = await fetch(endpoint + "/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.runtime.getSetting("GROQ_API_KEY")}`,
-            },
-            body: JSON.stringify({
-                model: /*this.runtime.imageVisionModelName ||*/ "llama-3.2-90b-vision-preview",
-                messages: [{ role: "user", content }],
-                max_tokens: 1024,
-            }),
-        });
-
-        if (!response.ok) {
-            await handleApiError(response, "Groq");
         }
 
         const data = await response.json();
@@ -333,7 +241,7 @@ export class ImageDescriptionService
 {
     static serviceType: ServiceType = ServiceType.IMAGE_DESCRIPTION;
 
-    private initialized = false;
+    private initialized: boolean = false;
     private runtime: IAgentRuntime | null = null;
     private provider: ImageProvider | null = null;
 
@@ -346,36 +254,20 @@ export class ImageDescriptionService
         this.runtime = runtime;
     }
 
-    private async initializeProvider(): Promise<boolean> {
+    private async initializeProvider(): Promise<void> {
         if (!this.runtime) {
             throw new Error("Runtime is required for image recognition");
         }
-
-        const availableModels = [
-            ModelProviderName.LLAMALOCAL,
-            ModelProviderName.ANTHROPIC,
-            ModelProviderName.GOOGLE,
-            ModelProviderName.OPENAI,
-            ModelProviderName.GROQ,
-        ].join(", ");
 
         const model = models[this.runtime?.character?.modelProvider];
 
         if (this.runtime.imageVisionModelProvider) {
             if (
                 this.runtime.imageVisionModelProvider ===
-                ModelProviderName.LLAMALOCAL ||
-                this.runtime.imageVisionModelProvider ===
-                ModelProviderName.OLLAMA
+                ModelProviderName.LLAMALOCAL
             ) {
                 this.provider = new LocalImageProvider();
-                elizaLogger.debug("Using local provider for vision model");
-            } else if (
-                this.runtime.imageVisionModelProvider ===
-                ModelProviderName.ANTHROPIC
-            ) {
-                this.provider = new AnthropicImageProvider(this.runtime);
-                elizaLogger.debug("Using anthropic for vision model");
+                elizaLogger.debug("Using llama local for vision model");
             } else if (
                 this.runtime.imageVisionModelProvider ===
                 ModelProviderName.GOOGLE
@@ -388,135 +280,97 @@ export class ImageDescriptionService
             ) {
                 this.provider = new OpenAIImageProvider(this.runtime);
                 elizaLogger.debug("Using openai for vision model");
-            } else if (
-                this.runtime.imageVisionModelProvider === ModelProviderName.GROQ
-            ) {
-                this.provider = new GroqImageProvider(this.runtime);
-                elizaLogger.debug("Using Groq for vision model");
             } else {
-                elizaLogger.warn(
-                    `Unsupported image vision model provider: ${this.runtime.imageVisionModelProvider}. ` +
-                    `Please use one of the following: ${availableModels}. ` +
-                    `Update the 'imageVisionModelProvider' field in the character file.`
+                elizaLogger.error(
+                    `Unsupported image vision model provider: ${this.runtime.imageVisionModelProvider}`
                 );
-                return false;
             }
-        } else if (
-            model === models[ModelProviderName.LLAMALOCAL] ||
-            model === models[ModelProviderName.OLLAMA]
-        ) {
+        } else if (model === models[ModelProviderName.LLAMALOCAL]) {
             this.provider = new LocalImageProvider();
-            elizaLogger.debug("Using local provider for vision model");
-        } else if (model === models[ModelProviderName.ANTHROPIC]) {
-            this.provider = new AnthropicImageProvider(this.runtime);
-            elizaLogger.debug("Using anthropic for vision model");
+            elizaLogger.debug("Using llama local for vision model");
         } else if (model === models[ModelProviderName.GOOGLE]) {
             this.provider = new GoogleImageProvider(this.runtime);
             elizaLogger.debug("Using google for vision model");
-        } else if (model === models[ModelProviderName.GROQ]) {
-            this.provider = new GroqImageProvider(this.runtime);
-            elizaLogger.debug("Using groq for vision model");
         } else {
             elizaLogger.debug("Using default openai for vision model");
             this.provider = new OpenAIImageProvider(this.runtime);
         }
 
-        try {
-            await this.provider.initialize();
-        } catch {
-            elizaLogger.error(
-                `Failed to initialize the image vision model provider: ${this.runtime.imageVisionModelProvider}`
-            );
-            return false;
-        }
-        return true;
+        await this.provider.initialize();
+        this.initialized = true;
     }
 
     private async loadImageData(
-        imageUrlOrPath: string
+        imageUrl: string
     ): Promise<{ data: Buffer; mimeType: string }> {
-        let loadedImageData: Buffer;
-        let loadedMimeType: string;
-        const { imageData, mimeType } = await this.fetchImage(imageUrlOrPath);
-        const skipConversion =
-            mimeType === "image/jpeg" ||
-            mimeType === "image/jpg" ||
-            mimeType === "image/png";
-        if (skipConversion) {
-            loadedImageData = imageData;
-            loadedMimeType = mimeType;
-        } else {
-            const converted = await this.convertImageDataToFormat(
-                imageData,
-                "png"
-            );
-            loadedImageData = converted.imageData;
-            loadedMimeType = converted.mimeType;
-        }
-        if (!loadedImageData || loadedImageData.length === 0) {
-            throw new Error("Failed to fetch image data");
-        }
-        return { data: loadedImageData, mimeType: loadedMimeType };
-    }
-
-    private async convertImageDataToFormat(
-        data: Buffer,
-        format: keyof FormatEnum | AvailableFormatInfo = "png"
-    ): Promise<{ imageData: Buffer; mimeType: string }> {
-        const tempFilePath = path.join(
-            os.tmpdir(),
-            `tmp_img_${Date.now()}.${format}`
-        );
-        try {
-            await sharp(data).toFormat(format).toFile(tempFilePath);
-            const { imageData, mimeType } = await this.fetchImage(tempFilePath);
-            return {
-                imageData,
-                mimeType,
-            };
-        } finally {
-            fs.unlinkSync(tempFilePath); // Clean up temp file
-        }
-    }
-
-    private async fetchImage(
-        imageUrlOrPath: string
-    ): Promise<{ imageData: Buffer; mimeType: string }> {
+        const isGif = imageUrl.toLowerCase().endsWith(".gif");
         let imageData: Buffer;
         let mimeType: string;
-        if (fs.existsSync(imageUrlOrPath)) {
-            imageData = fs.readFileSync(imageUrlOrPath);
-            const ext = path.extname(imageUrlOrPath).slice(1).toLowerCase();
-            mimeType = ext ? `image/${ext}` : "image/jpeg";
+
+        if (isGif) {
+            const { filePath } = await this.extractFirstFrameFromGif(imageUrl);
+            imageData = fs.readFileSync(filePath);
+            mimeType = "image/png";
+            fs.unlinkSync(filePath); // Clean up temp file
         } else {
-            const response = await fetch(imageUrlOrPath);
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to fetch image: ${response.statusText}`
-                );
+            if (fs.existsSync(imageUrl)) {
+                imageData = fs.readFileSync(imageUrl);
+                const ext = path.extname(imageUrl).slice(1);
+                mimeType = ext ? `image/${ext}` : "image/jpeg";
+            } else {
+                const response = await fetch(imageUrl);
+                if (!response.ok) {
+                    throw new Error(
+                        `Failed to fetch image: ${response.statusText}`
+                    );
+                }
+                imageData = Buffer.from(await response.arrayBuffer());
+                mimeType = response.headers.get("content-type") || "image/jpeg";
             }
-            imageData = Buffer.from(await response.arrayBuffer());
-            mimeType = response.headers.get("content-type") || "image/jpeg";
         }
-        return { imageData, mimeType };
+
+        if (!imageData || imageData.length === 0) {
+            throw new Error("Failed to fetch image data");
+        }
+
+        return { data: imageData, mimeType };
+    }
+
+    private async extractFirstFrameFromGif(
+        gifUrl: string
+    ): Promise<{ filePath: string }> {
+        const frameData = await gifFrames({
+            url: gifUrl,
+            frames: 1,
+            outputType: "png",
+        });
+
+        const tempFilePath = path.join(
+            os.tmpdir(),
+            `gif_frame_${Date.now()}.png`
+        );
+
+        return new Promise((resolve, reject) => {
+            const writeStream = fs.createWriteStream(tempFilePath);
+            frameData[0].getImage().pipe(writeStream);
+            writeStream.on("finish", () => resolve({ filePath: tempFilePath }));
+            writeStream.on("error", reject);
+        });
     }
 
     async describeImage(
-        imageUrlOrPath: string
+        imageUrl: string
     ): Promise<{ title: string; description: string }> {
         if (!this.initialized) {
-            this.initialized = await this.initializeProvider();
+            await this.initializeProvider();
         }
 
-        if (this.initialized) {
-            try {
-                const { data, mimeType } =
-                    await this.loadImageData(imageUrlOrPath);
-                return await this.provider.describeImage(data, mimeType);
-            } catch (error) {
-                elizaLogger.error("Error in describeImage:", error);
-                throw error;
-            }
+        try {
+            const { data, mimeType } = await this.loadImageData(imageUrl);
+            return await this.provider!.describeImage(data, mimeType);
+        } catch (error) {
+            elizaLogger.error("Error in describeImage:", error);
+            throw error;
         }
     }
 }

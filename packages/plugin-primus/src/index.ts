@@ -1,4 +1,4 @@
-import type { Plugin } from "@elizaos/core";
+import { Plugin } from "@elizaos/core";
 import { postTweetAction } from "./actions/postTweetAction.ts";
 import {PrimusAdapter} from "./adapter/primusAdapter.ts";
 

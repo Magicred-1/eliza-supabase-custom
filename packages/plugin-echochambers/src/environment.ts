@@ -1,4 +1,4 @@
-import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, elizaLogger } from "@elizaos/core";
 
 export async function validateEchoChamberConfig(
     runtime: IAgentRuntime
@@ -34,9 +34,8 @@ export async function validateEchoChamberConfig(
     const username =
         runtime.getSetting("ECHOCHAMBERS_USERNAME") ||
         `agent-${runtime.agentId}`;
-    // Change from DEFAULT_ROOM to ROOMS
-    const rooms = runtime.getSetting("ECHOCHAMBERS_ROOMS")?.split(",").map(r => r.trim()) || ["general"];
-
+    const defaultRoom =
+        runtime.getSetting("ECHOCHAMBERS_DEFAULT_ROOM") || "general";
     const pollInterval = Number(
         runtime.getSetting("ECHOCHAMBERS_POLL_INTERVAL") || 120
     );
@@ -51,6 +50,6 @@ export async function validateEchoChamberConfig(
     elizaLogger.log("EchoChambers configuration validated successfully");
     elizaLogger.log(`API URL: ${apiUrl}`);
     elizaLogger.log(`Username: ${username}`);
-    elizaLogger.log(`Watching Rooms: ${rooms.join(", ")}`);
+    elizaLogger.log(`Default Room: ${defaultRoom}`);
     elizaLogger.log(`Poll Interval: ${pollInterval}s`);
 }

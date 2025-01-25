@@ -1,8 +1,8 @@
 import {
-    type Action,
-    type IAgentRuntime,
-    type Memory,
-    type Content,
+    Action,
+    IAgentRuntime,
+    Memory,
+    Content,
     ModelClass,
     composeContext,
     generateText,

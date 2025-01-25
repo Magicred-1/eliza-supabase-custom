@@ -1,10 +1,10 @@
 import {
-    type Action,
-    type ActionExample,
-    type IAgentRuntime,
-    type Memory,
-    type State,
-    type HandlerCallback,
+    Action,
+    ActionExample,
+    IAgentRuntime,
+    Memory,
+    State,
+    HandlerCallback,
     elizaLogger,
     composeContext,
     ModelClass,
@@ -16,7 +16,7 @@ import {
     getUserBalance,
     withdrawBalance,
 } from "../utils/index.ts";
-import type { EscrowContent } from "../types/index.ts";
+import { EscrowContent } from "../types/index.ts";
 import { SUPPORTED_TOKENS } from "../utils/constants.ts";
 
 function isEscrowContent(content: any): content is EscrowContent {

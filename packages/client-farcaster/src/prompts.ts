@@ -1,5 +1,5 @@
 import {
-    type Character,
+    Character,
     messageCompletionFooter,
     shouldRespondFooter,
 } from "@elizaos/core";

@@ -1,12 +1,12 @@
 import {
-    type IPLicenseTerms,
-    type PILTerms,
+    IPLicenseTerms,
+    PILTerms,
     QUERY_ORDER_BY,
     QUERY_ORDER_DIRECTION,
-    type QueryOptions,
+    QueryOptions,
     RESOURCE_TYPE,
-    type ResourceType,
-    type Trait,
+    ResourceType,
+    Trait,
 } from "../types/api";
 import { elizaLogger } from "@elizaos/core";
 

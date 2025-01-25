@@ -1,8 +1,8 @@
-import type {
+import {
     ActionExample,
     IAgentRuntime,
     Memory,
-    Action,
+    type Action,
 } from "@elizaos/core";
 
 export const noneAction: Action = {

@@ -1,16 +1,16 @@
 import { RESTClient } from "../../advanced-sdk-ts/src/rest";
 import {
-    type Action,
-    type Plugin,
+    Action,
+    Plugin,
     elizaLogger,
-    type IAgentRuntime,
-    type Memory,
-    type HandlerCallback,
-    type State,
+    IAgentRuntime,
+    Memory,
+    HandlerCallback,
+    State,
     composeContext,
     generateObject,
     ModelClass,
-    type Provider,
+    Provider,
 } from "@elizaos/core";
 import { advancedTradeTemplate } from "../templates";
 import { isAdvancedTradeContent, AdvancedTradeSchema } from "../types";
@@ -22,9 +22,9 @@ import fs from "fs";
 import { createArrayCsvWriter } from "csv-writer";
 import {
     OrderSide,
-    type OrderConfiguration,
+    OrderConfiguration,
 } from "../../advanced-sdk-ts/src/rest/types/common-types";
-import type { CreateOrderResponse } from "../../advanced-sdk-ts/src/rest/types/orders-types";
+import { CreateOrderResponse } from "../../advanced-sdk-ts/src/rest/types/orders-types";
 
 // File path setup remains the same
 const __filename = fileURLToPath(import.meta.url);
@@ -165,7 +165,7 @@ async function hasEnoughBalance(
             return false;
         }
 
-        const available = Number.parseFloat(account.available_balance.value);
+        const available = parseFloat(account.available_balance.value);
         // Add buffer for fees only on USD purchases
         const requiredAmount = side === "BUY" ? amount * 1.01 : amount;
         elizaLogger.info(

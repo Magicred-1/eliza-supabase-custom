@@ -1,16 +1,16 @@
 import {
-    type IAgentRuntime,
+    IAgentRuntime,
     Service,
     ServiceType,
-    type IIrysService,
-    type UploadIrysResult,
-    type DataIrysFetchedFromGQL,
-    type GraphQLTag,
+    IIrysService,
+    UploadIrysResult,
+    DataIrysFetchedFromGQL,
+    GraphQLTag,
     IrysMessageType,
     generateMessageResponse,
     ModelClass,
     IrysDataType,
-    type IrysTimestamp,
+    IrysTimestamp,
 } from "@elizaos/core";
 import { Uploader } from "@irys/upload";
 import { BaseEth } from "@irys/upload-ethereum";
@@ -44,8 +44,8 @@ export class IrysService extends Service implements IIrysService {
 
     private runtime: IAgentRuntime | null = null;
     private irysUploader: any | null = null;
-    private endpointForTransactionId = "https://uploader.irys.xyz/graphql";
-    private endpointForData = "https://gateway.irys.xyz";
+    private endpointForTransactionId: string = "https://uploader.irys.xyz/graphql";
+    private endpointForData: string = "https://gateway.irys.xyz";
 
     async initialize(runtime: IAgentRuntime): Promise<void> {
         console.log("Initializing IrysService");

@@ -9,12 +9,12 @@
         "avail-js-sdk": "^0.3.0"
     },
     "devDependencies": {
-        "@types/node": "^20.0.0",
         "tsup": "8.3.5",
-        "@polkadot/types": "^10.11.3"
+        "@types/node": "^20.0.0"
     },
     "scripts": {
         "build": "tsup --format esm --dts",
-        "dev": "tsup --format esm --dts --watch"
+        "dev": "tsup --format esm --dts --watch",
+        "lint": "eslint --fix  --cache ."
     }
 }
