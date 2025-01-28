@@ -3,6 +3,7 @@ import { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
 import { RedisClient } from "@elizaos/adapter-redis";
 import { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
 import { SupabaseDatabaseAdapter } from "@elizaos/adapter-supabase";
+// import { pythDataPlugin } from "@elizaos/plugin-pyth-data";
 import { AutoClientInterface } from "@elizaos/client-auto";
 import { DiscordClientInterface } from "@elizaos/client-discord";
 import { FarcasterAgentClient } from "@elizaos/client-farcaster";
@@ -76,7 +77,7 @@ import { nftGenerationPlugin } from "@elizaos/plugin-nft-generation";
 import { createNodePlugin } from "@elizaos/plugin-node";
 import { obsidianPlugin } from "@elizaos/plugin-obsidian";
 import { sgxPlugin } from "@elizaos/plugin-sgx";
-import { solanaPlugin } from "@elizaos/plugin-solana";
+// import { solanaPlugin } from "@elizaos/plugin-solana";
 import { solanaAgentkitPlguin } from "@elizaos/plugin-solana-agentkit";
 import { autonomePlugin } from "@elizaos/plugin-autonome";
 import { storyPlugin } from "@elizaos/plugin-story";
@@ -746,10 +747,16 @@ export async function createAgent(
             nodePlugin,
             getSecret(character, "TAVILY_API_KEY") ? webSearchPlugin : null,
             getSecret(character, "SOLANA_PUBLIC_KEY") ||
-            (getSecret(character, "WALLET_PUBLIC_KEY") &&
-                !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
-                ? solanaPlugin
-                : null,
+            // (getSecret(character, "WALLET_PUBLIC_KEY") &&
+            //     !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+            //     ? solanaPlugin
+            //     : null,
+            // (getSecret(character, "PYTH_MAINNET_HERMES_URL") &&
+            //     getSecret(character, "PYTH_MAINNET_WSS_URL") &&
+            //     getSecret(character, "PYTH_MAINNET_PYTHNET_URL") &&
+            //     getSecret(character, "PYTH_MAINNET_PROGRAM_KEY"))
+            //     ? pythDataPlugin
+            //     : null,
             getSecret(character, "SOLANA_PRIVATE_KEY")
                 ? solanaAgentkitPlguin
                 : null,
@@ -974,7 +981,8 @@ async function startAgent(
         character.id ??= stringToUuid(character.name);
         character.username ??= character.name;
 
-        const token = getTokenForProvider(character.modelProvider, character);
+        const token =
+            getTokenForProvider(character.modelProvider, character) || "";
         const dataDir = path.join(__dirname, "../data");
 
         if (!fs.existsSync(dataDir)) {
@@ -1035,7 +1043,6 @@ async function startAgents() {
     if (charactersArg) {
         localCharacters = await loadCharacters(charactersArg);
     }
-
     // Track active agents
     const activeAgents = new Map<string, AgentRuntime>();
 
@@ -1051,7 +1058,6 @@ async function startAgents() {
                 )
             ) {
                 elizaLogger.info(`Stopping Supabase agent ${id}`);
-                // await runtime.shutdown();
                 directClient.unregisterAgent(runtime);
                 activeAgents.delete(id);
             }
@@ -1060,7 +1066,9 @@ async function startAgents() {
         // Start or update agents
         for (const config of supabaseConfigs) {
             try {
-                const existing = activeAgents.get(config.id);
+                const existing = config.id
+                    ? activeAgents.get(config.id)
+                    : undefined;
 
                 if (existing) {
                     // Check for changes in configuration
@@ -1071,20 +1079,26 @@ async function startAgents() {
                         elizaLogger.info(`Updating agent ${config.id}`);
                         // await existing.shutdown();
                         directClient.unregisterAgent(existing);
-                        activeAgents.delete(config.id);
+                        if (config.id) {
+                            activeAgents.delete(config.id);
+                        }
 
                         const newRuntime = await startAgent(
                             config,
                             directClient
                         );
-                        activeAgents.set(config.id, newRuntime);
+                        if (config.id) {
+                            activeAgents.set(config.id, newRuntime);
+                        }
                     }
                 } else {
                     elizaLogger.info(
                         `Starting new Supabase agent ${config.id}`
                     );
                     const runtime = await startAgent(config, directClient);
-                    activeAgents.set(config.id, runtime);
+                    if (config.id) {
+                        activeAgents.set(config.id, runtime);
+                    }
                 }
             } catch (error) {
                 elizaLogger.error(
@@ -1166,17 +1180,19 @@ async function startAgents() {
     const mergedCharacters = [...localCharacters, ...supabaseConfigs]
         .reduce((map, char) => {
             // Use spread operator to merge properties, Supabase configs will override local ones
-            map.set(char.id, {
-                ...(map.get(char.id) || {}), // Existing character
-                ...char, // New character data
-            });
+            if (char.id) {
+                map.set(char.id, {
+                    ...(map.get(char.id) || {}), // Existing character
+                    ...char, // New character data
+                });
+            }
             return map;
         }, new Map<string, Character>())
         .values();
 
     // Start all agents
     for (const character of mergedCharacters) {
-        if (!activeAgents.has(character.id)) {
+        if (character.id && !activeAgents.has(character.id)) {
             try {
                 const runtime = await startAgent(character, directClient);
                 activeAgents.set(character.id, runtime);
